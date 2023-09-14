@@ -1,0 +1,26 @@
+# stuff from build.cmd
+out/
+target
+bin/install
+bin/platform.sh
+bin/prelude.sh
+bin/prelude.ps1
+bin/sireum
+bin/sireum.bat
+bin/sireum.jar
+bin/slang-run.*
+bin/.sireum-win.jar
+bin/linux
+bin/mac
+bin/win
+bin/scala
+.idea/
+.settings/
+lib
+/resources/
+versions.properties
+*.cmd.jar
+*.cmd.com
+runtime/
+project.json
+*.dot
