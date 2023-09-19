@@ -82,8 +82,8 @@ class ExampleTest extends TestSuite {
           val in1 = StringValue(nextString().native)
           val in2 = StringValue(nextString().native)
 
-          tt.updatePort(component.getIn, StringValue(s"In 0"), in1, StringValue(""))
-          tt.updatePort(component.getIn, StringValue(s"In 1"), in2, StringValue(""))
+          tt.updatePort(component.getIn, StringValue(s"In 0"), in1)
+          tt.updatePort(component.getIn, StringValue(s"In 1"), in2)
 
           // let component think
           Thread.sleep(500)
@@ -91,8 +91,8 @@ class ExampleTest extends TestSuite {
           val out1 = StringValue(nextString().native)
           val out2 = StringValue(nextString().native)
 
-          tt.updatePort(component.getOut, StringValue(s"Out 0"), out1, StringValue(""))
-          tt.updatePort(component.getOut, StringValue(s"Out 1"), out2, StringValue(""))
+          tt.updatePort(component.getOut, StringValue(s"Out 0"), out1)
+          tt.updatePort(component.getOut, StringValue(s"Out 1"), out2)
 
           // wait before switching to the other component
           Thread.sleep(2000)

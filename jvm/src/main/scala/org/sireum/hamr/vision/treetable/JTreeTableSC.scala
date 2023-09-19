@@ -58,6 +58,31 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
     }
   }
 
+  def updatePort(insOuts: InputsOutputs, portName: Value, portValue: Value): Unit = {
+    insOuts match {
+      case inputs: InputsSC =>
+        for (i <- inputs.inputs.indices) {
+          if (inputs.inputs(i).column(0) == portName) {
+            if (inputs.inputs(i).column(1) != portValue) {
+              inputs.inputs(i).setUpdated(true)
+              tree.setCellRenderer(new cellColor)
+            }
+            inputs.inputs(i).setColumn(ISZ[Value](portName, portValue, inputs.inputs(i).column(2)))
+          }
+        }
+      case o: OutputsSC =>
+        for (i <- o.outputs.indices) {
+          if (o.outputs(i).column(0) == portName) {
+            if (o.outputs(i).column(1) != portValue) {
+              o.outputs(i).setUpdated(true)
+              tree.setCellRenderer(new cellColor)
+            }
+            o.outputs(i).setColumn(ISZ[Value](portName, portValue, o.outputs(i).column(2)))
+          }
+        }
+    }
+  }
+
   class cellColor extends DefaultTreeCellRenderer {
     override def getTreeCellRendererComponent(tree: JTree, value: AnyRef, sel: Boolean, exp: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component = {
       super.getTreeCellRendererComponent(tree, value, sel, exp, leaf, row, hasFocus)
