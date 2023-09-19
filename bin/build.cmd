@@ -55,13 +55,13 @@ val home: Os.Path = homeBin.up
 val sireum: Os.Path = homeBin / (if (Os.isWin) "sireum.bat" else "sireum")
 
 val proyekName: String = "sireum-proyek"
-val project: Os.Path = homeBin / "project_with_deps.cmd"
 
 def usage(): Unit = {
   println(
     st"""HAMR Vision /build
-        |Usage: ( tipe | test | compile |
-        |         ive  | setup )
+        |Usage: ( tipe | test | compile | m2 |
+        |         ive  | setup |
+        |         regen-tools)
         |""".render)
 }
 
@@ -87,7 +87,7 @@ def cloneProjects(): Unit = {
 
 def tipe(): Unit = {
   println("Slang type checking ...")
-  Os.proc(ISZ(sireum.string, "proyek", "tipe", "--project", project.string, "--par", "--strict-aliasing", home.string)).
+  Os.proc(ISZ(sireum.string, "proyek", "tipe", "--par", "--strict-aliasing", home.string)).
     at(home).console.runCheck()
   println()
 }
@@ -96,7 +96,7 @@ def compile(): Unit = {
   tipe()
 
   println("Compiling ...")
-  proc"$sireum proyek compile --project $project -n $proyekName --par --sha3 .".at(home).console.runCheck()
+  proc"$sireum proyek compile -n $proyekName --par --sha3 .".at(home).console.runCheck()
   println()
 }
 
@@ -106,7 +106,7 @@ def test(): Unit = {
 
   println(s"Testing ...")
 
-  proc"$sireum proyek test --project $project -n $proyekName --par --sha3 . org.sireum.hamr.vision".at(home).console.runCheck()
+  proc"$sireum proyek test -n $proyekName --par --sha3 . org.sireum.hamr.vision".at(home).console.runCheck()
   println()
 }
 
@@ -126,7 +126,7 @@ def m2(): Os.Path = {
   val repository = Os.home / ".m2" / "repository"
   val visionRepo = repository / "org" / "sireum" / "hamr-vision"
   visionRepo.removeAll()
-  proc"$sireum proyek publish --project $project -n $proyekName --target jvm --par --sha3 --ignore-runtime --m2 ${repository.up.canon} . org.sireum.kekinian".at(home).console.run()
+  proc"$sireum proyek publish -n $proyekName --target jvm --par --sha3 --ignore-runtime --m2 ${repository.up.canon} . org.sireum.kekinian".at(home).console.run()
 
   return visionRepo
 }
@@ -157,7 +157,7 @@ for (i <- 0 until Os.cliArgs.size) {
       tipe()
     case string"ive" =>
       setup()
-      proc"$sireum proyek ive --project $project .".at(home).echo.console.runCheck()
+      proc"$sireum proyek ive .".at(home).echo.console.runCheck()
     case string"m2" =>
       setup()
       m2()
