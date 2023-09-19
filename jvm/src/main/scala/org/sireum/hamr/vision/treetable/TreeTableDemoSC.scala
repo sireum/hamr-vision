@@ -13,8 +13,8 @@ class TreeTableDemoSC extends JFrame {
   this.setTitle("TreeTable Demo")
   val ex: ISZ[compSC] = new Ex2SC().build
   val treeTable = new JTreeTableSC(new DemoTreeTableModelSC(ex))
-  treeTable.updatePort(ex(0).getIn.getInputs, StringValue("I am a port"), StringValue("2024"), StringValue("I UPDATED!"))
-  treeTable.updatePort(ex(1).getOut.getOutputs, StringValue("Pizzas"), StringValue("53"), StringValue("I also got UPDATED!"))
+  treeTable.updatePort(ex(0).getIn, StringValue("I am a port"), StringValue("2024"), StringValue("I UPDATED!"))
+  treeTable.updatePort(ex(1).getOut, StringValue("Pizzas"), StringValue("53"), StringValue("I also got UPDATED!"))
   this.add(new JScrollPane(treeTable))
   this.setVisible(true)
 }
