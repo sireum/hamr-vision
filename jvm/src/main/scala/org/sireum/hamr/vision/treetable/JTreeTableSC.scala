@@ -4,10 +4,10 @@ import java.awt._
 import java.awt.event.MouseEvent
 import java.util.EventObject
 import javax.swing._
-import javax.swing.event.{ListSelectionEvent, ListSelectionListener}
-import javax.swing.table.{DefaultTableCellRenderer, TableCellEditor, TableCellRenderer}
+import javax.swing.event._
+import javax.swing.table._
 import javax.swing.tree._
-import org.sireum.{IS, ISZ, Z}
+import org.sireum._
 import org.sireum.hamr.vision.value._
 
 class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create the tree. It will be used as a renderer and editor.
@@ -55,7 +55,6 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
             o.outputs(i).setColumn(ISZ[Value](portName, portValue, portDesc))
           }
         }
-
     }
   }
 
@@ -90,6 +89,9 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
         c.setBackground(if (output.getUpdated) Color.yellow else table.getBackground)
       } else setBackground(table.getBackground)
       if (isSelected) setBackground(table.getSelectionBackground)
+
+      table.getModel.asInstanceOf[AbstractTableModel].fireTableRowsUpdated(row, row)
+
       c
     }
   }
