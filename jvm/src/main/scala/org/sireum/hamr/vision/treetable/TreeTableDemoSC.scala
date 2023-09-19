@@ -2,6 +2,8 @@ package org.sireum.hamr.vision.treetable
 
 import java.awt._
 import javax.swing._
+import org.sireum.ISZ
+import org.sireum.hamr.vision.value._
 
 
 class TreeTableDemoSC extends JFrame {
@@ -9,10 +11,10 @@ class TreeTableDemoSC extends JFrame {
   this.setSize(500, 350)
   this.setLayout(new FlowLayout)
   this.setTitle("TreeTable Demo")
-  val ex: Array[compSC] = new Ex2SC().build
+  val ex: ISZ[compSC] = new Ex2SC().build
   val treeTable = new JTreeTableSC(new DemoTreeTableModelSC(ex))
-  treeTable.updatePort(ex(0).getIn.getInputs, "I am a port", "2024", "I UPDATED!")
-  treeTable.updatePort(ex(1).getOut.getOutputs, "Pizzas", "53", "I also got UPDATED!")
+  treeTable.updatePort(ex(0).getIn.getInputs, StringValue("I am a port"), StringValue("2024"), StringValue("I UPDATED!"))
+  treeTable.updatePort(ex(1).getOut.getOutputs, StringValue("Pizzas"), StringValue("53"), StringValue("I also got UPDATED!"))
   this.add(new JScrollPane(treeTable))
   this.setVisible(true)
 }

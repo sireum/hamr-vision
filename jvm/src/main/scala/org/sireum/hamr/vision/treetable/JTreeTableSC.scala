@@ -7,6 +7,8 @@ import javax.swing._
 import javax.swing.event.{ListSelectionEvent, ListSelectionListener}
 import javax.swing.table.{DefaultTableCellRenderer, TableCellEditor, TableCellRenderer}
 import javax.swing.tree._
+import org.sireum.ISZ
+import org.sireum.hamr.vision.value._
 
 class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create the tree. It will be used as a renderer and editor.
   /** A subclass of JTree. */
@@ -31,32 +33,40 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
     // Metal looks better like this.
     setRowHeight(18)
   }
-  def updatePort(array: Array[_], portName: String, portValue: String, portDesc: String): Unit = {
-    if (array.isInstanceOf[Array[InputSC]]) {
-      val input = array.asInstanceOf[Array[InputSC]]
+  def updatePort(isz: ISZ[_], portName: Value, portValue: Value, portDesc: Value): Unit = {
+    /*val test = isz.asInstanceOf[ISZ[InputSC]]
+    test(0).column(0) match {
+      case StringValue(v) => System.out.println(v.native)
+      case e => System.out.println(e.toString)
+    }*/
+    /*try {
+      val input = isz.asInstanceOf[ISZ[InputSC]]
       for (i <- input.indices) {
-        if (input(i).column(0) eq portName) {
-          if (input(i).column(1) ne portValue) {
+        if (input(i).column(0) == portName) {
+          if (input(i).column(1) != portValue) {
             input(i).setUpdated(true)
             tree.setCellRenderer(new cellColor)
           }
-          input(i).setColumn(Array[Object](portName, portValue, portDesc))
+          input(i).setColumn(ISZ[Value](portName, portValue, portDesc))
         }
       }
+    } catch {
+      case e: Throwable => System.out.println(e)
     }
-    if (array.isInstanceOf[Array[OutputSC]]) {
-      val output = array.asInstanceOf[Array[OutputSC]]
+    try {
+      val output = isz.asInstanceOf[ISZ[OutputSC]]
       for (i <- output.indices) {
-        if (output(i).column(0) eq portName) {
-          if (output(i).column(1) ne portValue) {
+        if (output(i).column(0) == portName) {
+          if (output(i).column(1) != portValue) {
             output(i).setUpdated(true)
             tree.setCellRenderer(new cellColor)
           }
-          output(i).setColumn(Array[Object](portName, portValue, portDesc))
+          output(i).setColumn(ISZ[Value](portName, portValue, portDesc))
         }
       }
-    }
-    tree.updateUI()
+    } catch {
+      case e: Throwable => System.out.println(e)
+    }*/
   }
 
   class cellColor extends DefaultTreeCellRenderer {
@@ -182,7 +192,11 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
              */
     override def paint(g: Graphics): Unit = {
       g.translate(0, -visibleRow * getRowHeight)
-      super.paint(g)
+      try {
+        super.paint(g)
+      } catch {
+        case e: Throwable => System.out.println(e)
+      }
     }
 
     /**

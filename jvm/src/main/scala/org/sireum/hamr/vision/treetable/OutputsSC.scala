@@ -1,6 +1,8 @@
 package org.sireum.hamr.vision.treetable
 
-class OutputsSC(var outputs: Array[OutputSC]) {
-  def getOutputs: Array[OutputSC] = { return outputs; }
+import org.sireum.ISZ
+
+class OutputsSC(var outputs: ISZ[OutputSC]) {
+  def getOutputs: ISZ[OutputSC] = { return outputs; }
   override def toString: String = { return "Output"; }
 }

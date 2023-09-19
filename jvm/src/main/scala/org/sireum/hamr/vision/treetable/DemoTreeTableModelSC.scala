@@ -1,6 +1,8 @@
 package org.sireum.hamr.vision.treetable
 
 import javax.swing.tree.TreePath
+import org.sireum.ISZ
+import org.sireum.hamr.vision.value._
 
 object DemoTreeTableModelSC {
   private val root = "System"
@@ -8,10 +10,16 @@ object DemoTreeTableModelSC {
   protected var cTypes: Array[Class[_]] = Array(classOf[TreeTableModelSC], classOf[String], classOf[String])
 }
 
-class DemoTreeTableModelSC (var list: Array[compSC]) extends AbstractTreeTableModelSC(DemoTreeTableModelSC.root) {
+class DemoTreeTableModelSC (var list: ISZ[compSC]) extends AbstractTreeTableModelSC(DemoTreeTableModelSC.root) {
   def getPort(node: AnyRef, place: Int): AnyRef = {
-    if (node.isInstanceOf[InputSC]) return node.asInstanceOf[InputSC].getColumn(place)
-    if (node.isInstanceOf[OutputSC]) return node.asInstanceOf[OutputSC].getColumn(place)
+    if (node.isInstanceOf[InputSC]) return (node.asInstanceOf[InputSC].getColumn(place) match {
+      case StringValue(v) => v.native
+      case _ => "This isn't handled yet"
+    })
+    if (node.isInstanceOf[OutputSC]) (return node.asInstanceOf[OutputSC].getColumn(place) match {
+      case StringValue(v) => v.native
+      case _ => "This isn't handled yet"
+    })
     null
   }
 
@@ -69,7 +77,7 @@ class DemoTreeTableModelSC (var list: Array[compSC]) extends AbstractTreeTableMo
     //return parent.equals(root) ? 3 : 0;
     var parentNew = parent
     if (parentNew.isInstanceOf[TreePath]) parentNew = parent.asInstanceOf[TreePath].getLastPathComponent
-    if (parentNew eq "System") return list.length
+    if (parentNew eq "System") return list.length.toInt
     if (parentNew.isInstanceOf[compSC]) {
       val comp = parentNew.asInstanceOf[compSC]
       var n = 0
@@ -77,8 +85,8 @@ class DemoTreeTableModelSC (var list: Array[compSC]) extends AbstractTreeTableMo
       if (comp.getOut.getOutputs.length > 0) n += 1
       return n
     }
-    if (parentNew.isInstanceOf[InputsSC]) return parentNew.asInstanceOf[InputsSC].getInputs.length
-    if (parentNew.isInstanceOf[OutputsSC]) return parentNew.asInstanceOf[OutputsSC].getOutputs.length
+    if (parentNew.isInstanceOf[InputsSC]) return parentNew.asInstanceOf[InputsSC].getInputs.length.toInt
+    if (parentNew.isInstanceOf[OutputsSC]) return parentNew.asInstanceOf[OutputsSC].getOutputs.length.toInt
     0
   }
 }
