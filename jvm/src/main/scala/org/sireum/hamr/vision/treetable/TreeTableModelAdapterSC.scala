@@ -50,7 +50,10 @@ class TreeTableModelAdapterSC(var treeTableModel: TreeTableModelSC, var tree: JT
 
   protected def nodeForRow(row: Int): AnyRef = {
     val treePath = tree.getPathForRow(row)
-    treePath.getLastPathComponent
+    if(treePath != null) {
+      return treePath.getLastPathComponent
+    }
+    null
   }
 
   override def getValueAt(row: Int, column: Int): AnyRef = treeTableModel.getValueAt(nodeForRow(row), column)
