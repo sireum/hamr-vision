@@ -6,7 +6,7 @@ import org.sireum.hamr.vision.value._
 
 object DemoTreeTableModelSC {
   private val root = "System"
-  protected var cNames: Array[String] = Array("Port", "Value", "Description")
+  protected var cNames: Array[String] = Array("Port", "Description", "Value")
   protected var cTypes: Array[Class[_]] = Array(classOf[TreeTableModelSC], classOf[String], classOf[String])
 }
 

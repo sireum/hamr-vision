@@ -49,18 +49,18 @@ class ExampleTest extends TestSuite {
 
       val (model, elems): (DemoTreeTableModelSC, ISZ[compSC]) = {
         val input = ISZ[InputSC](
-          new InputSC(ISZ[Value](StringValue("In 0"), StringValue(""), StringValue("This is an input port"))),
-          new InputSC(ISZ[Value](StringValue("In 1"), StringValue(""), StringValue("I am another port"))))
+          new InputSC(ISZ[Value](StringValue("In 0"), StringValue("This is an input port"), StringValue(""))),
+          new InputSC(ISZ[Value](StringValue("In 1"), StringValue("I am another port"), StringValue(""))))
         val output = ISZ[OutputSC](
-          new OutputSC(ISZ[Value](StringValue("Out 0"), StringValue(""), StringValue("This is an Output"))),
-          new OutputSC(ISZ[Value](StringValue("Out 1"), StringValue(""), StringValue("Haha robot talk"))))
+          new OutputSC(ISZ[Value](StringValue("Out 0"), StringValue("This is an Output"), StringValue(""))),
+          new OutputSC(ISZ[Value](StringValue("Out 1"), StringValue("Haha robot talk"), StringValue(""))))
         val component = new compSC(new InputsSC(input), new OutputsSC(output), "Component 0")
         val input2 = ISZ[InputSC](
-          new InputSC(ISZ[Value](StringValue("In 0"), StringValue(""), StringValue("More inputs!"))),
-          new InputSC(ISZ[Value](StringValue("In 1"), StringValue(""), StringValue("The bite of '87?"))))
+          new InputSC(ISZ[Value](StringValue("In 0"), StringValue("More inputs!"), StringValue(""))),
+          new InputSC(ISZ[Value](StringValue("In 1"), StringValue("The bite of '87?"), StringValue(""))))
         val output2 = ISZ[OutputSC](
-          new OutputSC(ISZ[Value](StringValue("Out 0"), StringValue(""), StringValue("Bendy?"))),
-          new OutputSC(ISZ[Value](StringValue("Out 1"), StringValue(""), StringValue("Pizza orders"))))
+          new OutputSC(ISZ[Value](StringValue("Out 0"), StringValue("Bendy?"), StringValue(""))),
+          new OutputSC(ISZ[Value](StringValue("Out 1"), StringValue("Pizza orders"), StringValue(""))))
         val component2 = new compSC(new InputsSC(input2), new OutputsSC(output2), "Component 1")
 
         (new DemoTreeTableModelSC(ISZ[compSC](component, component2)), ISZ(component, component2))

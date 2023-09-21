@@ -33,6 +33,7 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
     // Metal looks better like this.
     setRowHeight(18)
   }
+  this.getTableHeader.setReorderingAllowed(false)
   var colorToggle = true
   def getColorToggle: Boolean = { colorToggle }
   def setColorToggle(v: Boolean): Unit = { colorToggle = v }
@@ -40,26 +41,26 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
   var colorChoice = Color.yellow
   def setColorChoice(c: Color): Unit = { colorChoice = c}
 
-  def updatePort(insOuts: InputsOutputs, portName: Value, portValue: Value, portDesc: Value): Unit = {
+  def updatePort(insOuts: InputsOutputs, portName: Value, portDesc: Value, portValue: Value): Unit = {
     insOuts match {
       case inputs: InputsSC =>
         for (i <- inputs.inputs.indices) {
           if (inputs.inputs(i).column(0) == portName) {
-            if (inputs.inputs(i).column(1) != portValue) {
+            if (inputs.inputs(i).column(2) != portValue) {
               inputs.inputs(i).setUpdated(true)
               if(colorToggle) tree.setCellRenderer(new cellColor)
             }
-            inputs.inputs(i).setColumn(ISZ[Value](portName, portValue, portDesc))
+            inputs.inputs(i).setColumn(ISZ[Value](portName, portDesc, portValue))
           }
         }
       case o: OutputsSC =>
         for (i <- o.outputs.indices) {
           if (o.outputs(i).column(0) == portName) {
-            if (o.outputs(i).column(1) != portValue) {
+            if (o.outputs(i).column(2) != portValue) {
               o.outputs(i).setUpdated(true)
               if(colorToggle) tree.setCellRenderer(new cellColor)
             }
-            o.outputs(i).setColumn(ISZ[Value](portName, portValue, portDesc))
+            o.outputs(i).setColumn(ISZ[Value](portName, portDesc, portValue))
           }
         }
     }
@@ -70,21 +71,21 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
       case inputs: InputsSC =>
         for (i <- inputs.inputs.indices) {
           if (inputs.inputs(i).column(0) == portName) {
-            if (inputs.inputs(i).column(1) != portValue) {
+            if (inputs.inputs(i).column(2) != portValue) {
               inputs.inputs(i).setUpdated(true)
               if(colorToggle) tree.setCellRenderer(new cellColor)
             }
-            inputs.inputs(i).setColumn(ISZ[Value](portName, portValue, inputs.inputs(i).column(2)))
+            inputs.inputs(i).setColumn(ISZ[Value](portName, inputs.inputs(i).column(1), portValue))
           }
         }
       case o: OutputsSC =>
         for (i <- o.outputs.indices) {
           if (o.outputs(i).column(0) == portName) {
-            if (o.outputs(i).column(1) != portValue) {
+            if (o.outputs(i).column(2) != portValue) {
               o.outputs(i).setUpdated(true)
               if(colorToggle) tree.setCellRenderer(new cellColor)
             }
-            o.outputs(i).setColumn(ISZ[Value](portName, portValue, o.outputs(i).column(2)))
+            o.outputs(i).setColumn(ISZ[Value](portName, o.outputs(i).column(1), portValue))
           }
         }
     }
