@@ -23,8 +23,8 @@ class TreeTableDemoSC extends JFrame with ActionListener {
 
   val ex: ISZ[compSC] = new Ex2SC().build
   val treeTable = new JTreeTableSC(new DemoTreeTableModelSC(ex))
-  treeTable.updatePort(ex(0).getIn, StringValue("I am a port"), StringValue("2024"), StringValue("I UPDATED!"))
-  treeTable.updatePort(ex(1).getOut, StringValue("Pizzas"), StringValue("53"), StringValue("I also got UPDATED!"))
+  treeTable.updatePort(ex(0).getIn, StringValue("I am a port"), StringValue("I UPDATED!"), StringValue("2024"))
+  treeTable.updatePort(ex(1).getOut, StringValue("Pizzas"), StringValue("I also got UPDATED!"), StringValue("53"))
   this.setJMenuBar(menuBar)
   this.add(new JScrollPane(treeTable))
   this.setVisible(true)
