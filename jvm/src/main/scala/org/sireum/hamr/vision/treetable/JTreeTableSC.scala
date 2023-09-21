@@ -33,6 +33,10 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
     // Metal looks better like this.
     setRowHeight(18)
   }
+  var colorToggle = true
+  def getColorToggle: Boolean = { colorToggle }
+  def setColorToggle(v: Boolean): Unit = { colorToggle = v }
+
   def updatePort(insOuts: InputsOutputs, portName: Value, portValue: Value, portDesc: Value): Unit = {
     insOuts match {
       case inputs: InputsSC =>
@@ -40,7 +44,7 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
           if (inputs.inputs(i).column(0) == portName) {
             if (inputs.inputs(i).column(1) != portValue) {
               inputs.inputs(i).setUpdated(true)
-              tree.setCellRenderer(new cellColor)
+              if(colorToggle) tree.setCellRenderer(new cellColor)
             }
             inputs.inputs(i).setColumn(ISZ[Value](portName, portValue, portDesc))
           }
@@ -50,7 +54,7 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
           if (o.outputs(i).column(0) == portName) {
             if (o.outputs(i).column(1) != portValue) {
               o.outputs(i).setUpdated(true)
-              tree.setCellRenderer(new cellColor)
+              if(colorToggle) tree.setCellRenderer(new cellColor)
             }
             o.outputs(i).setColumn(ISZ[Value](portName, portValue, portDesc))
           }
@@ -65,7 +69,7 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
           if (inputs.inputs(i).column(0) == portName) {
             if (inputs.inputs(i).column(1) != portValue) {
               inputs.inputs(i).setUpdated(true)
-              tree.setCellRenderer(new cellColor)
+              if(colorToggle) tree.setCellRenderer(new cellColor)
             }
             inputs.inputs(i).setColumn(ISZ[Value](portName, portValue, inputs.inputs(i).column(2)))
           }
@@ -75,7 +79,7 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
           if (o.outputs(i).column(0) == portName) {
             if (o.outputs(i).column(1) != portValue) {
               o.outputs(i).setUpdated(true)
-              tree.setCellRenderer(new cellColor)
+              if(colorToggle) tree.setCellRenderer(new cellColor)
             }
             o.outputs(i).setColumn(ISZ[Value](portName, portValue, o.outputs(i).column(2)))
           }
@@ -86,12 +90,12 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
   class cellColor extends DefaultTreeCellRenderer {
     override def getTreeCellRendererComponent(tree: JTree, value: AnyRef, sel: Boolean, exp: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component = {
       super.getTreeCellRendererComponent(tree, value, sel, exp, leaf, row, hasFocus)
-      if (value.isInstanceOf[InputSC]) {
+      if (value.isInstanceOf[InputSC] && colorToggle) {
         val input = value.asInstanceOf[InputSC]
         setBackgroundNonSelectionColor(if (input.getUpdated) Color.yellow
         else Color.white)
       }
-      else if (value.isInstanceOf[OutputSC]) {
+      else if (value.isInstanceOf[OutputSC] && colorToggle) {
         val output = value.asInstanceOf[OutputSC]
         setBackgroundNonSelectionColor(if (output.getUpdated) Color.yellow
         else Color.white)
@@ -105,11 +109,11 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
     override def getTableCellRendererComponent(table: JTable, value: AnyRef, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component = {
       val c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
       val node = table.getValueAt(row, 0)
-      if (node.isInstanceOf[InputSC]) {
+      if (node.isInstanceOf[InputSC] && colorToggle) {
         val input = node.asInstanceOf[InputSC]
         c.setBackground(if (input.getUpdated) Color.yellow else table.getBackground)
       }
-      else if (node.isInstanceOf[OutputSC]) {
+      else if (node.isInstanceOf[OutputSC] && colorToggle) {
         val output = node.asInstanceOf[OutputSC]
         c.setBackground(if (output.getUpdated) Color.yellow else table.getBackground)
       } else setBackground(table.getBackground)
@@ -200,7 +204,7 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
              * This is overridden to set the height to match that of the lele.
              */
     override def setBounds(x: Int, y: Int, w: Int, h: Int): Unit = {
-      super.setBounds(x, 0, w, JTreeTableSC.this.getHeight)
+      super.setBounds(x, 18, w, JTreeTableSC.this.getHeight)
     }
 
     /**
@@ -225,11 +229,11 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
         table.getColumnModel.getColumn(i).setCellRenderer(new rowColor) //Overriding the cell renderers any column besides the first
       }
       val node = table.getValueAt(row, 0)
-      if (node.isInstanceOf[InputSC]) {
+      if (node.isInstanceOf[InputSC] && colorToggle) {
         val input = node.asInstanceOf[InputSC]
         setBackground(if (input.getUpdated) Color.yellow else table.getBackground)
       }
-      else if (node.isInstanceOf[OutputSC]) {
+      else if (node.isInstanceOf[OutputSC] && colorToggle) {
         val output = node.asInstanceOf[OutputSC]
         setBackground(if (output.getUpdated) Color.yellow else table.getBackground)
       } else setBackground(table.getBackground)
