@@ -37,6 +37,9 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
   def getColorToggle: Boolean = { colorToggle }
   def setColorToggle(v: Boolean): Unit = { colorToggle = v }
 
+  var colorChoice = Color.yellow
+  def setColorChoice(c: Color): Unit = { colorChoice = c}
+
   def updatePort(insOuts: InputsOutputs, portName: Value, portValue: Value, portDesc: Value): Unit = {
     insOuts match {
       case inputs: InputsSC =>
@@ -92,12 +95,12 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
       super.getTreeCellRendererComponent(tree, value, sel, exp, leaf, row, hasFocus)
       if (value.isInstanceOf[InputSC] && colorToggle) {
         val input = value.asInstanceOf[InputSC]
-        setBackgroundNonSelectionColor(if (input.getUpdated) Color.yellow
+        setBackgroundNonSelectionColor(if (input.getUpdated) colorChoice
         else Color.white)
       }
       else if (value.isInstanceOf[OutputSC] && colorToggle) {
         val output = value.asInstanceOf[OutputSC]
-        setBackgroundNonSelectionColor(if (output.getUpdated) Color.yellow
+        setBackgroundNonSelectionColor(if (output.getUpdated) colorChoice
         else Color.white)
       }
       else setBackgroundNonSelectionColor(Color.white)
@@ -111,11 +114,11 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
       val node = table.getValueAt(row, 0)
       if (node.isInstanceOf[InputSC] && colorToggle) {
         val input = node.asInstanceOf[InputSC]
-        c.setBackground(if (input.getUpdated) Color.yellow else table.getBackground)
+        c.setBackground(if (input.getUpdated) colorChoice else table.getBackground)
       }
       else if (node.isInstanceOf[OutputSC] && colorToggle) {
         val output = node.asInstanceOf[OutputSC]
-        c.setBackground(if (output.getUpdated) Color.yellow else table.getBackground)
+        c.setBackground(if (output.getUpdated) colorChoice else table.getBackground)
       } else setBackground(table.getBackground)
       if (isSelected) setBackground(table.getSelectionBackground)
 
@@ -231,11 +234,11 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
       val node = table.getValueAt(row, 0)
       if (node.isInstanceOf[InputSC] && colorToggle) {
         val input = node.asInstanceOf[InputSC]
-        setBackground(if (input.getUpdated) Color.yellow else table.getBackground)
+        setBackground(if (input.getUpdated) colorChoice else table.getBackground)
       }
       else if (node.isInstanceOf[OutputSC] && colorToggle) {
         val output = node.asInstanceOf[OutputSC]
-        setBackground(if (output.getUpdated) Color.yellow else table.getBackground)
+        setBackground(if (output.getUpdated) colorChoice else table.getBackground)
       } else setBackground(table.getBackground)
       if (isSelected) setBackground(table.getSelectionBackground)
       visibleRow = row

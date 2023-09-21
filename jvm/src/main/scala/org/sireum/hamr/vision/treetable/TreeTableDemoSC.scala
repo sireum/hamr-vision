@@ -16,7 +16,9 @@ class TreeTableDemoSC extends JFrame with ActionListener {
   val menuBar = new JMenuBar
   val optionsMenu = new JMenu("Options")
   val colorMenu = new JMenuItem("Color Toggle")
+  val colorChoice = new JMenuItem("Color Choice")
   optionsMenu.add(colorMenu)
+  optionsMenu.add(colorChoice)
   menuBar.add(optionsMenu)
 
   val ex: ISZ[compSC] = new Ex2SC().build
@@ -31,6 +33,9 @@ class TreeTableDemoSC extends JFrame with ActionListener {
     if (e.getSource == colorMenu) {
       if (treeTable.getColorToggle) treeTable.setColorToggle(false)
       else treeTable.setColorToggle(true)
+    }
+    if(e.getSource == colorChoice){
+      treeTable.setColorChoice(JColorChooser.showDialog(null, "Pick a color", Color.yellow))
     }
   }
 }

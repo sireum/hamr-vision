@@ -69,7 +69,9 @@ class ExampleTest extends TestSuite {
       val menuBar = new JMenuBar
       val optionsMenu = new JMenu("Options")
       val colorMenu = new JMenuItem("Color Toggle")
+      val colorChoice = new JMenuItem("Color Choice")
       optionsMenu.add(colorMenu)
+      optionsMenu.add(colorChoice)
       menuBar.add(optionsMenu)
 
       val tt = new JTreeTableSC(model)
@@ -83,10 +85,11 @@ class ExampleTest extends TestSuite {
       jf.setVisible(true)
 
       colorMenu.addActionListener((e: ActionEvent) => {
-        if (e.getSource == colorMenu) {
-          if (tt.getColorToggle) tt.setColorToggle(false)
-          else tt.setColorToggle(true)
-        }
+        if (tt.getColorToggle) tt.setColorToggle(false)
+        else tt.setColorToggle(true)
+      })
+      colorChoice.addActionListener((e: ActionEvent) => {
+        tt.setColorChoice(JColorChooser.showDialog(null, "Pick a color", Color.yellow))
       })
 
       while (true) {
