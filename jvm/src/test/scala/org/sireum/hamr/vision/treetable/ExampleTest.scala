@@ -7,8 +7,9 @@ import org.sireum.hamr.vision.value._
 import org.sireum.hamr.vision.value.{RandomLib, Value}
 import org.sireum.test.TestSuite
 
-import java.awt.BorderLayout
-import javax.swing.{JFrame, JScrollPane, WindowConstants}
+import java.awt._
+import java.awt.event._
+import javax.swing._
 
 class ExampleTest extends TestSuite {
 
@@ -65,6 +66,11 @@ class ExampleTest extends TestSuite {
         (new DemoTreeTableModelSC(ISZ[compSC](component, component2)), ISZ(component, component2))
       }
 
+      val menuBar = new JMenuBar
+      val optionsMenu = new JMenu("Options")
+      val colorMenu = new JMenuItem("Color Toggle")
+      optionsMenu.add(colorMenu)
+      menuBar.add(optionsMenu)
 
       val tt = new JTreeTableSC(model)
       val jf = new JFrame()
@@ -72,8 +78,16 @@ class ExampleTest extends TestSuite {
       jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
       val jsp = new JScrollPane(tt)
       jf.add(jsp, BorderLayout.CENTER)
+      jf.setJMenuBar(menuBar)
       jf.pack()
       jf.setVisible(true)
+
+      colorMenu.addActionListener((e: ActionEvent) => {
+        if (e.getSource == colorMenu) {
+          if (tt.getColorToggle) tt.setColorToggle(false)
+          else tt.setColorToggle(true)
+        }
+      })
 
       while (true) {
         for (j <- 0 to 1) {
