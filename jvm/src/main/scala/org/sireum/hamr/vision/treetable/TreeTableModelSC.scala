@@ -1,6 +1,7 @@
 package org.sireum.hamr.vision.treetable
 
 import javax.swing.tree.TreeModel
+import scala.collection.mutable
 
 abstract class TreeTableModelSC extends TreeModel{
   def getColumnCount: Int
@@ -9,4 +10,5 @@ abstract class TreeTableModelSC extends TreeModel{
   def getValueAt(node: AnyRef, column: Int): AnyRef
   def isCellEditable(node: AnyRef, column: Int): Boolean
   def setValueAt(aValue: AnyRef, node: AnyRef, column: Int): Unit
+  def getBridges: mutable.HashMap[Int, BridgeSC]
 }

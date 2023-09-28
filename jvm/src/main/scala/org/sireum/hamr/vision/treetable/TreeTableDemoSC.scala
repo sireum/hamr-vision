@@ -22,20 +22,20 @@ class TreeTableDemoSC extends JFrame with ActionListener {
   menuBar.add(optionsMenu)
 
   val ex: ISZ[compSC] = new Ex2SC().build
-  val treeTable = new JTreeTableSC(new DemoTreeTableModelSC(ex))
-  treeTable.updatePort(ex(0).getIn, StringValue("I am a port"), StringValue("I UPDATED!"), StringValue("2024"))
-  treeTable.updatePort(ex(1).getOut, StringValue("Pizzas"), StringValue("I also got UPDATED!"), StringValue("53"))
+  //val treeTable = new JTreeTableSC(new DemoTreeTableModelSC(ex))
+  /*treeTable.updatePort(ex(0).getIn, StringValue("I am a port"), StringValue("I UPDATED!"), StringValue("2024"))
+  treeTable.updatePort(ex(1).getOut, StringValue("Pizzas"), StringValue("I also got UPDATED!"), StringValue("53"))*/
   this.setJMenuBar(menuBar)
-  this.add(new JScrollPane(treeTable))
+  //this.add(new JScrollPane(treeTable))
   this.setVisible(true)
 
   override def actionPerformed(e: event.ActionEvent): Unit = {
-    if (e.getSource == colorMenu) {
+    /*if (e.getSource == colorMenu) {
       if (treeTable.getColorToggle) treeTable.setColorToggle(false)
       else treeTable.setColorToggle(true)
     }
     if(e.getSource == colorChoice){
       treeTable.setColorChoice(JColorChooser.showDialog(null, "Pick a color", Color.yellow))
-    }
+    }*/
   }
 }
