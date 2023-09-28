@@ -1,8 +1,9 @@
 package org.sireum.hamr.vision.treetable
 
 import javax.swing.tree.TreePath
-import org.sireum.ISZ
 import org.sireum.hamr.vision.value._
+
+import scala.collection.mutable
 
 object DemoTreeTableModelSC {
   private val root = "System"
@@ -10,19 +11,16 @@ object DemoTreeTableModelSC {
   protected var cTypes: Array[Class[_]] = Array(classOf[TreeTableModelSC], classOf[String], classOf[String])
 }
 
-class DemoTreeTableModelSC (var list: ISZ[compSC]) extends AbstractTreeTableModelSC(DemoTreeTableModelSC.root) {
+class DemoTreeTableModelSC (var list: mutable.HashMap[Int, BridgeSC]) extends AbstractTreeTableModelSC(DemoTreeTableModelSC.root) {
   def getPort(node: AnyRef, place: Int): AnyRef = {
-    if (node.isInstanceOf[InputSC]) return (node.asInstanceOf[InputSC].getColumn(place) match {
+    if (node.isInstanceOf[PortSC]) return node.asInstanceOf[PortSC].getColumn(place) match {
       case StringValue(v) => v.native
       case _ => "This isn't handled yet"
-    })
-    if (node.isInstanceOf[OutputSC]) (return node.asInstanceOf[OutputSC].getColumn(place) match {
-      case StringValue(v) => v.native
-      case _ => "This isn't handled yet"
-    })
+    }
     null
   }
 
+  override def getBridges: mutable.HashMap[Int, BridgeSC] = { list }
   override def getColumnCount = 3
 
   override def getColumnClass(column: Int): Class[_] = {
@@ -53,22 +51,14 @@ class DemoTreeTableModelSC (var list: ISZ[compSC]) extends AbstractTreeTableMode
   override def getChild(parent: AnyRef, index: Int): AnyRef = {
     //return "Child " + index;
     if (parent eq "System") return list(index)
-    if (parent.isInstanceOf[compSC]) {
-      val comp = parent.asInstanceOf[compSC]
-      if (comp.getIn.getInputs.length > 0) {
-        if (comp.getOut.getOutputs.length > 0) return if (index == 0) comp.getIn
-        else comp.getOut
-        return comp.getIn
-      }
-      else return comp.getOut
+    if (parent.isInstanceOf[BridgeSC]) {
+      val bridge = parent.asInstanceOf[BridgeSC]
+      return bridge.category.get(index)
     }
-    if (parent.isInstanceOf[InputsSC]) {
-      val inputs = parent.asInstanceOf[InputsSC]
-      return inputs.getInputs(index)
-    }
-    if (parent.isInstanceOf[OutputsSC]) {
-      val outputs = parent.asInstanceOf[OutputsSC]
-      return outputs.getOutputs(index)
+    if (parent.isInstanceOf[CategorySC]) {
+      val category = parent.asInstanceOf[CategorySC]
+      val array = category.children.keySet.toArray
+      return category.children(array(index))
     }
     ""
   }
@@ -77,16 +67,15 @@ class DemoTreeTableModelSC (var list: ISZ[compSC]) extends AbstractTreeTableMode
     //return parent.equals(root) ? 3 : 0;
     var parentNew = parent
     if (parentNew.isInstanceOf[TreePath]) parentNew = parent.asInstanceOf[TreePath].getLastPathComponent
-    if (parentNew eq "System") return list.length.toInt
-    if (parentNew.isInstanceOf[compSC]) {
-      val comp = parentNew.asInstanceOf[compSC]
-      var n = 0
-      if (comp.getIn.getInputs.length > 0) n += 1
-      if (comp.getOut.getOutputs.length > 0) n += 1
-      return n
+    if (parentNew eq "System") return list.size
+    if (parent.isInstanceOf[BridgeSC]) {
+      val bridge = parent.asInstanceOf[BridgeSC]
+      return bridge.category.size()
     }
-    if (parentNew.isInstanceOf[InputsSC]) return parentNew.asInstanceOf[InputsSC].getInputs.length.toInt
-    if (parentNew.isInstanceOf[OutputsSC]) return parentNew.asInstanceOf[OutputsSC].getOutputs.length.toInt
+    if (parent.isInstanceOf[CategorySC]) {
+      val category = parent.asInstanceOf[CategorySC]
+      return category.children.size
+    }
     0
   }
 }

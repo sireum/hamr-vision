@@ -8,7 +8,7 @@ import javax.swing.event._
 import javax.swing.table._
 import javax.swing.tree._
 import org.sireum._
-import org.sireum.hamr.vision.value._
+import org.sireum.hamr.vision.value.Value
 
 class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create the tree. It will be used as a renderer and editor.
   /** A subclass of JTree. */
@@ -41,67 +41,20 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
   var colorChoice = Color.yellow
   def setColorChoice(c: Color): Unit = { colorChoice = c}
 
-  def updatePort(insOuts: InputsOutputs, portName: Value, portDesc: Value, portValue: Value): Unit = {
-    insOuts match {
-      case inputs: InputsSC =>
-        for (i <- inputs.inputs.indices) {
-          if (inputs.inputs(i).column(0) == portName) {
-            if (inputs.inputs(i).column(2) != portValue) {
-              inputs.inputs(i).setUpdated(true)
-              if(colorToggle) tree.setCellRenderer(new cellColor)
-            }
-            inputs.inputs(i).setColumn(ISZ[Value](portName, portDesc, portValue))
-          }
-        }
-      case o: OutputsSC =>
-        for (i <- o.outputs.indices) {
-          if (o.outputs(i).column(0) == portName) {
-            if (o.outputs(i).column(2) != portValue) {
-              o.outputs(i).setUpdated(true)
-              if(colorToggle) tree.setCellRenderer(new cellColor)
-            }
-            o.outputs(i).setColumn(ISZ[Value](portName, portDesc, portValue))
-          }
-        }
-    }
-  }
-
-  def updatePort(insOuts: InputsOutputs, portName: Value, portValue: Value): Unit = {
-    insOuts match {
-      case inputs: InputsSC =>
-        for (i <- inputs.inputs.indices) {
-          if (inputs.inputs(i).column(0) == portName) {
-            if (inputs.inputs(i).column(2) != portValue) {
-              inputs.inputs(i).setUpdated(true)
-              if(colorToggle) tree.setCellRenderer(new cellColor)
-            }
-            inputs.inputs(i).setColumn(ISZ[Value](portName, inputs.inputs(i).column(1), portValue))
-          }
-        }
-      case o: OutputsSC =>
-        for (i <- o.outputs.indices) {
-          if (o.outputs(i).column(0) == portName) {
-            if (o.outputs(i).column(2) != portValue) {
-              o.outputs(i).setUpdated(true)
-              if(colorToggle) tree.setCellRenderer(new cellColor)
-            }
-            o.outputs(i).setColumn(ISZ[Value](portName, o.outputs(i).column(1), portValue))
-          }
-        }
-    }
+  def updatePort(bridgeID: Int, category: Int, portID: Int, value: Value): Unit = {
+    val bridge = treeTableModel.getBridges
+    val port = bridge(bridgeID).category.get(category).children(portID)
+    port.setValue(value)
+    port.setUpdated(true)
+    if(colorToggle) tree.setCellRenderer(new cellColor)
   }
 
   class cellColor extends DefaultTreeCellRenderer {
     override def getTreeCellRendererComponent(tree: JTree, value: AnyRef, sel: Boolean, exp: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component = {
       super.getTreeCellRendererComponent(tree, value, sel, exp, leaf, row, hasFocus)
-      if (value.isInstanceOf[InputSC] && colorToggle) {
-        val input = value.asInstanceOf[InputSC]
-        setBackgroundNonSelectionColor(if (input.getUpdated) colorChoice
-        else Color.white)
-      }
-      else if (value.isInstanceOf[OutputSC] && colorToggle) {
-        val output = value.asInstanceOf[OutputSC]
-        setBackgroundNonSelectionColor(if (output.getUpdated) colorChoice
+      if(value.isInstanceOf[PortSC] && getColorToggle) {
+        val port = value.asInstanceOf[PortSC]
+        setBackgroundNonSelectionColor(if (port.getUpdated) colorChoice
         else Color.white)
       }
       else setBackgroundNonSelectionColor(Color.white)
@@ -113,13 +66,10 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
     override def getTableCellRendererComponent(table: JTable, value: AnyRef, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component = {
       val c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
       val node = table.getValueAt(row, 0)
-      if (node.isInstanceOf[InputSC] && colorToggle) {
-        val input = node.asInstanceOf[InputSC]
-        c.setBackground(if (input.getUpdated) colorChoice else table.getBackground)
-      }
-      else if (node.isInstanceOf[OutputSC] && colorToggle) {
-        val output = node.asInstanceOf[OutputSC]
-        c.setBackground(if (output.getUpdated) colorChoice else table.getBackground)
+      if (node.isInstanceOf[PortSC] && getColorToggle) {
+        val port = node.asInstanceOf[PortSC]
+        setBackground(if (port.getUpdated) colorChoice
+        else Color.white)
       } else setBackground(table.getBackground)
       if (isSelected) setBackground(table.getSelectionBackground)
 
@@ -233,13 +183,9 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
         table.getColumnModel.getColumn(i).setCellRenderer(new rowColor) //Overriding the cell renderers any column besides the first
       }
       val node = table.getValueAt(row, 0)
-      if (node.isInstanceOf[InputSC] && colorToggle) {
-        val input = node.asInstanceOf[InputSC]
-        setBackground(if (input.getUpdated) colorChoice else table.getBackground)
-      }
-      else if (node.isInstanceOf[OutputSC] && colorToggle) {
-        val output = node.asInstanceOf[OutputSC]
-        setBackground(if (output.getUpdated) colorChoice else table.getBackground)
+      if (node.isInstanceOf[PortSC] && getColorToggle) {
+        val port = value.asInstanceOf[PortSC]
+        setBackground(if (port.getUpdated) colorChoice else table.getBackground)
       } else setBackground(table.getBackground)
       if (isSelected) setBackground(table.getSelectionBackground)
       visibleRow = row
@@ -297,19 +243,19 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
 
                   i += 1
                 }
-              } else if (tree.isCollapsed(row) && node.isInstanceOf[compSC]) {
+              } else if (tree.isCollapsed(row) && node.isInstanceOf[BridgeSC]) {
                 tree.expandRow(row)
-                for (i <- 0 to treeTableModel.getChildCount(node)) {
-                  if(i == 1){
+                for (i <- 0 until treeTableModel.getChildCount(node)) {
+                  if(i == 0){
                     tree.expandRow(row + 1)
                   } else {
                     childNode = treeTableModel.getChildCount(treeTableModel.getChild(node, i))
                     tree.expandRow(row + childNode + 2)
                   }
                 }
-              } else if(tree.isExpanded(row) && node.isInstanceOf[compSC]) {
-                for (i <- 0 to treeTableModel.getChildCount(node)) {
-                  if (i == 1) {
+              } else if(tree.isExpanded(row) && node.isInstanceOf[BridgeSC]) {
+                for (i <- 0 until treeTableModel.getChildCount(node)) {
+                  if (i == 0) {
                     tree.collapseRow(row + 1)
                   } else {
                     childNode = treeTableModel.getChildCount(treeTableModel.getChild(node, i))

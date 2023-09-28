@@ -10,6 +10,7 @@ import org.sireum.test.TestSuite
 import java.awt._
 import java.awt.event._
 import javax.swing._
+import scala.collection.mutable
 
 class ExampleTest extends TestSuite {
 
@@ -46,25 +47,29 @@ class ExampleTest extends TestSuite {
         halt("Infeasible")
       }
 
+      val bridges = new mutable.HashMap[Int, BridgeSC]
+      bridges(0) = new BridgeSC("Component 0")
+      val input = new CategorySC("Input")
+      input.children(110) = new PortSC(ISZ[Value](StringValue("In 0"), StringValue("This is an input port"), StringValue("")))
+      input.children(111) = new PortSC(ISZ[Value](StringValue("In 1"), StringValue("I am another port"), StringValue("")))
+      bridges(0).category.add(input)
+      val output = new CategorySC("Output")
+      output.children(120) = new PortSC(ISZ[Value](StringValue("Out 0"), StringValue("This is an Output"), StringValue("")))
+      output.children(121) = new PortSC(ISZ[Value](StringValue("Out 1"), StringValue("Haha robot talk"), StringValue("")))
+      bridges(0).category.add(output)
 
-      val (model, elems): (DemoTreeTableModelSC, ISZ[compSC]) = {
-        val input = ISZ[InputSC](
-          new InputSC(ISZ[Value](StringValue("In 0"), StringValue("This is an input port"), StringValue(""))),
-          new InputSC(ISZ[Value](StringValue("In 1"), StringValue("I am another port"), StringValue(""))))
-        val output = ISZ[OutputSC](
-          new OutputSC(ISZ[Value](StringValue("Out 0"), StringValue("This is an Output"), StringValue(""))),
-          new OutputSC(ISZ[Value](StringValue("Out 1"), StringValue("Haha robot talk"), StringValue(""))))
-        val component = new compSC(new InputsSC(input), new OutputsSC(output), "Component 0")
-        val input2 = ISZ[InputSC](
-          new InputSC(ISZ[Value](StringValue("In 0"), StringValue("More inputs!"), StringValue(""))),
-          new InputSC(ISZ[Value](StringValue("In 1"), StringValue("The bite of '87?"), StringValue(""))))
-        val output2 = ISZ[OutputSC](
-          new OutputSC(ISZ[Value](StringValue("Out 0"), StringValue("Bendy?"), StringValue(""))),
-          new OutputSC(ISZ[Value](StringValue("Out 1"), StringValue("Pizza orders"), StringValue(""))))
-        val component2 = new compSC(new InputsSC(input2), new OutputsSC(output2), "Component 1")
+      bridges(1) = new BridgeSC("Component 1")
+      val input2 = new CategorySC("Input")
+      input2.children(110) = new PortSC(ISZ[Value](StringValue("In 0"), StringValue("More inputs!"), StringValue("")))
+      input2.children(111) = new PortSC(ISZ[Value](StringValue("In 1"), StringValue("The bite of '87?"), StringValue("")))
+      bridges(1).category.add(input2)
+      val output2 = new CategorySC("Output")
+      output2.children(120) = new PortSC(ISZ[Value](StringValue("Out 0"), StringValue("Bendy?"), StringValue("")))
+      output2.children(121) = new PortSC(ISZ[Value](StringValue("Out 1"), StringValue("Pizza orders"), StringValue("")))
+      bridges(1).category.add(output2)
 
-        (new DemoTreeTableModelSC(ISZ[compSC](component, component2)), ISZ(component, component2))
-      }
+      val model = new DemoTreeTableModelSC(bridges)
+      val elems = bridges
 
       val menuBar = new JMenuBar
       val optionsMenu = new JMenu("Options")
@@ -99,8 +104,8 @@ class ExampleTest extends TestSuite {
           val in1 = StringValue(nextString().native)
           val in2 = StringValue(nextString().native)
 
-          tt.updatePort(component.getIn, StringValue(s"In 0"), in1)
-          tt.updatePort(component.getIn, StringValue(s"In 1"), in2)
+          tt.updatePort(j, 0, 110, in1)
+          tt.updatePort(j, 0, 111, in2)
 
           // let component think
           Thread.sleep(500)
@@ -108,8 +113,8 @@ class ExampleTest extends TestSuite {
           val out1 = StringValue(nextString().native)
           val out2 = StringValue(nextString().native)
 
-          tt.updatePort(component.getOut, StringValue(s"Out 0"), out1)
-          tt.updatePort(component.getOut, StringValue(s"Out 1"), out2)
+          tt.updatePort(j, 1, 120, out1)
+          tt.updatePort(j, 1, 121, out2)
 
           // wait before switching to the other component
           Thread.sleep(2000)
