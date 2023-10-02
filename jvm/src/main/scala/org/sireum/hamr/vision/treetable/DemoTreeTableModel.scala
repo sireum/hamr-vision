@@ -48,8 +48,8 @@ class DemoTreeTableModel(var list: ISZ[JEntry]) extends AbstractTreeTableModel(D
   override def getChild(parent: AnyRef, index: Int): AnyRef = {
     //return "Child " + index;
     if (parent eq "System") return list(index)
-    if (parent.isInstanceOf[JJCategory]) {
-      val category = parent.asInstanceOf[JJCategory]
+    if (parent.isInstanceOf[JCategory]) {
+      val category = parent.asInstanceOf[JCategory]
       val array = category.children
       return array(index)
     }
@@ -61,8 +61,8 @@ class DemoTreeTableModel(var list: ISZ[JEntry]) extends AbstractTreeTableModel(D
     var parentNew = parent
     if (parentNew.isInstanceOf[TreePath]) parentNew = parent.asInstanceOf[TreePath].getLastPathComponent
     if (parentNew eq "System") return list.size.toInt
-    if (parent.isInstanceOf[JJCategory]) {
-      val category = parent.asInstanceOf[JJCategory]
+    if (parent.isInstanceOf[JCategory]) {
+      val category = parent.asInstanceOf[JCategory]
       return category.children.size.toInt
     }
     0

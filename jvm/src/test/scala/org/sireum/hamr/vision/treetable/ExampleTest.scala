@@ -48,17 +48,17 @@ class ExampleTest extends TestSuite {
       }
 
       val entries: ISZ[JEntry] = ISZ(
-        new JJCategory(
+        new JCategory(
           "Component 0",
           ISZ(
-            new JJCategory(
+            new JCategory(
               "Input",
               ISZ(
                 new JPort("110", ISZ(StringValue("In 0"), StringValue("This is an input port"), StringValue(""))),
                 new JPort("111", ISZ(StringValue("In 1"), StringValue("I am another port"), StringValue("")))
               )
             ),
-            new JJCategory(
+            new JCategory(
               "Output",
               ISZ(
                 new JPort("112", ISZ(StringValue("Out 0"), StringValue("This is an Output"), StringValue(""))),
@@ -67,17 +67,17 @@ class ExampleTest extends TestSuite {
             )
           )
         ),
-        new JJCategory(
+        new JCategory(
           "Component 1",
           ISZ(
-            new JJCategory(
+            new JCategory(
               "Input 1",
               ISZ(
                 new JPort("120", ISZ(StringValue("In 0"), StringValue("More inputs!"), StringValue(""))),
                 new JPort("121", ISZ(StringValue("In 1"), StringValue("The bite of '87?"), StringValue("")))
               )
             ),
-            new JJCategory(
+            new JCategory(
               "Output 1",
               ISZ(
                 new JPort("122", ISZ(StringValue("Out 0"), StringValue("Bendy?"), StringValue(""))),

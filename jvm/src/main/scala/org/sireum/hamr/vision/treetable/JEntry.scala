@@ -20,7 +20,7 @@ class JPort(val rowID: String, var column: ISZ[Value]) extends JEntry {
   }
 }
 
-class JJCategory(val name: String, val children: ISZ[JEntry]) extends JEntry {
+class JCategory(val name: String, val children: ISZ[JEntry]) extends JEntry {
   override def toString: String = { return name }
 }
 
