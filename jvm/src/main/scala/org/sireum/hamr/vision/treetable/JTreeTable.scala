@@ -9,26 +9,28 @@ import javax.swing.table._
 import javax.swing.tree._
 import org.sireum._
 import org.sireum.hamr.vision.value.Value
+import scala.collection.mutable
 
-class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create the tree. It will be used as a renderer and editor.
+class JTreeTable(treeTableModel: TreeTableModel) extends JTable { // Create the tree. It will be used as a renderer and editor.
   /** A subclass of JTree. */
   protected var tree: TreeTableCellRenderer = _
   tree = new TreeTableCellRenderer(treeTableModel)
   // Install a tableModel representing the visible rows in the tree.
-  super.setModel(new TreeTableModelAdapterSC(treeTableModel, tree))
+  super.setModel(new TreeTableModelAdapter(treeTableModel, tree))
   // Force the JTable and JTree to share their row selection models.
   val selectionWrapper = new ListToTreeSelectionModelWrapper
   tree.setSelectionModel(selectionWrapper)
   setSelectionModel(selectionWrapper.getListSelectionModel)
   // Install the tree editor renderer and editor.
-  setDefaultRenderer(classOf[TreeTableModelSC], tree)
-  setDefaultEditor(classOf[TreeTableModelSC], new TreeTableCellEditor)
+  setDefaultRenderer(classOf[TreeTableModel], tree)
+  setDefaultEditor(classOf[TreeTableModel], new TreeTableCellEditor)
   // No grid.
   setShowGrid(false)
   // No intercell spacing
   setIntercellSpacing(new Dimension(0, 0))
   // And update the height of the trees row to match that of
   // the table.
+  var map = mutable.HashMap[String, JPort]()
   if (tree.getRowHeight < 1) {
     // Metal looks better like this.
     setRowHeight(18)
@@ -41,9 +43,22 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
   var colorChoice = Color.yellow
   def setColorChoice(c: Color): Unit = { colorChoice = c}
 
-  def updatePort(bridgeID: Int, category: Int, portID: Int, value: Value): Unit = {
-    val bridge = treeTableModel.getBridges
-    val port = bridge(bridgeID).category.get(category).children(portID)
+  def walk(entry: JEntry): JEntry = {
+    entry match {
+      case c: JJCategory =>
+        var children: ISZ[JEntry] = ISZ()
+        for(ee <- c.children ) {
+          children = children :+ walk(ee)
+        }
+        return c
+      case r: JPort =>
+        map(r.rowID) = r
+        return map(r.rowID)
+    }
+  }
+
+  def updatePort(portID: String, value: Value): Unit = {
+    val port = map(portID)
     port.setValue(value)
     port.setUpdated(true)
     if(colorToggle) tree.setCellRenderer(new cellColor)
@@ -52,8 +67,8 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
   class cellColor extends DefaultTreeCellRenderer {
     override def getTreeCellRendererComponent(tree: JTree, value: AnyRef, sel: Boolean, exp: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component = {
       super.getTreeCellRendererComponent(tree, value, sel, exp, leaf, row, hasFocus)
-      if(value.isInstanceOf[PortSC] && getColorToggle) {
-        val port = value.asInstanceOf[PortSC]
+      if(value.isInstanceOf[JPort] && getColorToggle) {
+        val port = value.asInstanceOf[JPort]
         setBackgroundNonSelectionColor(if (port.getUpdated) colorChoice
         else Color.white)
       }
@@ -66,8 +81,8 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
     override def getTableCellRendererComponent(table: JTable, value: AnyRef, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component = {
       val c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
       val node = table.getValueAt(row, 0)
-      if (node.isInstanceOf[PortSC] && getColorToggle) {
-        val port = node.asInstanceOf[PortSC]
+      if (node.isInstanceOf[JPort] && getColorToggle) {
+        val port = node.asInstanceOf[JPort]
         setBackground(if (port.getUpdated) colorChoice
         else Color.white)
       } else setBackground(table.getBackground)
@@ -98,7 +113,7 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
        * is not the right thing to do for an editor. Returning -1 for the
        * editing row in this case, ensures the editor is never painted.
        */
-  override def getEditingRow: Int = if (getColumnClass(editingColumn) eq classOf[TreeTableModelSC]) -1
+  override def getEditingRow: Int = if (getColumnClass(editingColumn) eq classOf[TreeTableModel]) -1
   else editingRow
 
   /**
@@ -150,7 +165,7 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
     override def setRowHeight(rowHeight: Int): Unit = {
       if (rowHeight > 0) {
         super.setRowHeight(rowHeight)
-        if (JTreeTableSC.this != null && JTreeTableSC.this.getRowHeight != rowHeight) JTreeTableSC.this.setRowHeight(getRowHeight)
+        if (JTreeTable.this != null && JTreeTable.this.getRowHeight != rowHeight) JTreeTable.this.setRowHeight(getRowHeight)
       }
     }
 
@@ -158,7 +173,7 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
              * This is overridden to set the height to match that of the lele.
              */
     override def setBounds(x: Int, y: Int, w: Int, h: Int): Unit = {
-      super.setBounds(x, 18, w, JTreeTableSC.this.getHeight)
+      super.setBounds(x, 18, w, JTreeTable.this.getHeight)
     }
 
     /**
@@ -183,8 +198,8 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
         table.getColumnModel.getColumn(i).setCellRenderer(new rowColor) //Overriding the cell renderers any column besides the first
       }
       val node = table.getValueAt(row, 0)
-      if (node.isInstanceOf[PortSC] && getColorToggle) {
-        val port = value.asInstanceOf[PortSC]
+      if (node.isInstanceOf[JPort] && getColorToggle) {
+        val port = value.asInstanceOf[JPort]
         setBackground(if (port.getUpdated) colorChoice else table.getBackground)
       } else setBackground(table.getBackground)
       if (isSelected) setBackground(table.getSelectionBackground)
@@ -221,7 +236,7 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
     override def isCellEditable(e: EventObject): Boolean = {
       if (e.isInstanceOf[MouseEvent]) {
         for (counter <- getColumnCount - 1 to 0 by -1) {
-          if (getColumnClass(counter) eq classOf[TreeTableModelSC]) {
+          if (getColumnClass(counter) eq classOf[TreeTableModel]) {
             val me = e.asInstanceOf[MouseEvent]
             tree.setToggleClickCount(0)
             if (me.getClickCount == 2) {
@@ -243,7 +258,7 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
 
                   i += 1
                 }
-              } else if (tree.isCollapsed(row) && node.isInstanceOf[BridgeSC]) {
+              } else if (tree.isCollapsed(row) && node.isInstanceOf[JJCategory]) {
                 tree.expandRow(row)
                 for (i <- 0 until treeTableModel.getChildCount(node)) {
                   if(i == 0){
@@ -253,7 +268,7 @@ class JTreeTableSC(treeTableModel: TreeTableModelSC) extends JTable { // Create 
                     tree.expandRow(row + childNode + 2)
                   }
                 }
-              } else if(tree.isExpanded(row) && node.isInstanceOf[BridgeSC]) {
+              } else if(tree.isExpanded(row) && node.isInstanceOf[JJCategory]) {
                 for (i <- 0 until treeTableModel.getChildCount(node)) {
                   if (i == 0) {
                     tree.collapseRow(row + 1)

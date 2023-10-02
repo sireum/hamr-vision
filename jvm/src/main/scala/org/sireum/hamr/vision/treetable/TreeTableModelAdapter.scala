@@ -5,7 +5,7 @@ import javax.swing.event.{TreeExpansionEvent, TreeExpansionListener, TreeModelEv
 import javax.swing.table.AbstractTableModel
 
 
-class TreeTableModelAdapterSC(var treeTableModel: TreeTableModelSC, var tree: JTree) extends AbstractTableModel {
+class TreeTableModelAdapter(var treeTableModel: TreeTableModel, var tree: JTree) extends AbstractTableModel {
   tree.addTreeExpansionListener(new TreeExpansionListener() {
     // Don't use fireTableRowsInserted() here; the selection model
     // would get updated twice.

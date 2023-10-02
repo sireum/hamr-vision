@@ -47,29 +47,48 @@ class ExampleTest extends TestSuite {
         halt("Infeasible")
       }
 
-      val bridges = new mutable.HashMap[Int, BridgeSC]
-      bridges(0) = new BridgeSC("Component 0")
-      val input = new CategorySC("Input")
-      input.children(110) = new PortSC(ISZ[Value](StringValue("In 0"), StringValue("This is an input port"), StringValue("")))
-      input.children(111) = new PortSC(ISZ[Value](StringValue("In 1"), StringValue("I am another port"), StringValue("")))
-      bridges(0).category.add(input)
-      val output = new CategorySC("Output")
-      output.children(120) = new PortSC(ISZ[Value](StringValue("Out 0"), StringValue("This is an Output"), StringValue("")))
-      output.children(121) = new PortSC(ISZ[Value](StringValue("Out 1"), StringValue("Haha robot talk"), StringValue("")))
-      bridges(0).category.add(output)
+      val entries: ISZ[JEntry] = ISZ(
+        new JJCategory(
+          "Component 0",
+          ISZ(
+            new JJCategory(
+              "Input",
+              ISZ(
+                new JPort("110", ISZ(StringValue("In 0"), StringValue("This is an input port"), StringValue(""))),
+                new JPort("111", ISZ(StringValue("In 1"), StringValue("I am another port"), StringValue("")))
+              )
+            ),
+            new JJCategory(
+              "Output",
+              ISZ(
+                new JPort("112", ISZ(StringValue("Out 0"), StringValue("This is an Output"), StringValue(""))),
+                new JPort("113", ISZ(StringValue("Out 1"), StringValue("Haha robot talk"), StringValue("")))
+              )
+            )
+          )
+        ),
+        new JJCategory(
+          "Component 1",
+          ISZ(
+            new JJCategory(
+              "Input 1",
+              ISZ(
+                new JPort("120", ISZ(StringValue("In 0"), StringValue("More inputs!"), StringValue(""))),
+                new JPort("121", ISZ(StringValue("In 1"), StringValue("The bite of '87?"), StringValue("")))
+              )
+            ),
+            new JJCategory(
+              "Output 1",
+              ISZ(
+                new JPort("122", ISZ(StringValue("Out 0"), StringValue("Bendy?"), StringValue(""))),
+                new JPort("123", ISZ(StringValue("Out 1"), StringValue("Pizza orders"), StringValue("")))
+              )
+            )
+          )
+        )
+      )
 
-      bridges(1) = new BridgeSC("Component 1")
-      val input2 = new CategorySC("Input")
-      input2.children(110) = new PortSC(ISZ[Value](StringValue("In 0"), StringValue("More inputs!"), StringValue("")))
-      input2.children(111) = new PortSC(ISZ[Value](StringValue("In 1"), StringValue("The bite of '87?"), StringValue("")))
-      bridges(1).category.add(input2)
-      val output2 = new CategorySC("Output")
-      output2.children(120) = new PortSC(ISZ[Value](StringValue("Out 0"), StringValue("Bendy?"), StringValue("")))
-      output2.children(121) = new PortSC(ISZ[Value](StringValue("Out 1"), StringValue("Pizza orders"), StringValue("")))
-      bridges(1).category.add(output2)
-
-      val model = new DemoTreeTableModelSC(bridges)
-      val elems = bridges
+      val model = new DemoTreeTableModel(entries)
 
       val menuBar = new JMenuBar
       val optionsMenu = new JMenu("Options")
@@ -79,7 +98,10 @@ class ExampleTest extends TestSuite {
       optionsMenu.add(colorChoice)
       menuBar.add(optionsMenu)
 
-      val tt = new JTreeTableSC(model)
+      val tt = new JTreeTable(model)
+      for (i <- 0 until entries.size.toInt) {
+        tt.walk(entries(i))
+      }
       val jf = new JFrame()
       jf.setTitle("Example Test")
       jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
@@ -98,27 +120,40 @@ class ExampleTest extends TestSuite {
       })
 
       while (true) {
-        for (j <- 0 to 1) {
-          val component = elems(j)
+        val in1 = StringValue(nextString().native)
+        val in2 = StringValue(nextString().native)
 
-          val in1 = StringValue(nextString().native)
-          val in2 = StringValue(nextString().native)
+        tt.updatePort("110", in1)
+        tt.updatePort("111", in2)
 
-          tt.updatePort(j, 0, 110, in1)
-          tt.updatePort(j, 0, 111, in2)
+        // let component think
+        Thread.sleep(500)
 
-          // let component think
-          Thread.sleep(500)
+        val out1 = StringValue(nextString().native)
+        val out2 = StringValue(nextString().native)
 
-          val out1 = StringValue(nextString().native)
-          val out2 = StringValue(nextString().native)
+        tt.updatePort("120", out1)
+        tt.updatePort("121", out2)
 
-          tt.updatePort(j, 1, 120, out1)
-          tt.updatePort(j, 1, 121, out2)
+        Thread.sleep(500)
 
-          // wait before switching to the other component
-          Thread.sleep(2000)
-        }
+        val in3 = StringValue(nextString().native)
+        val in4 = StringValue(nextString().native)
+
+        tt.updatePort("112", in3)
+        tt.updatePort("113", in4)
+
+        // let component think
+        Thread.sleep(500)
+
+        val out3 = StringValue(nextString().native)
+        val out4 = StringValue(nextString().native)
+
+        tt.updatePort("122", out3)
+        tt.updatePort("123", out4)
+
+        // wait before switching to the other component
+        Thread.sleep(2000)
       }
     }
   }
