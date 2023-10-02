@@ -3,7 +3,7 @@ package org.sireum.hamr.vision.treetable
 import javax.swing.event.{EventListenerList, TreeModelEvent, TreeModelListener}
 import javax.swing.tree.TreePath
 
-abstract class AbstractTreeTableModelSC(protected var root: AnyRef) extends TreeTableModelSC {
+abstract class AbstractTreeTableModel(protected var root: AnyRef) extends TreeTableModel {
   protected var listenerList = new EventListenerList
   override def getRoot: AnyRef = root
   override def isLeaf(node: AnyRef): Boolean = getChildCount(node) == 0
@@ -135,7 +135,7 @@ abstract class AbstractTreeTableModelSC(protected var root: AnyRef) extends Tree
        *  Making this column editable causes the JTable to forward mouse
        *  and keyboard events in the Tree column to the underlying JTree.
        */
-  override def isCellEditable(node: AnyRef, column: Int): Boolean = getColumnClass(column) eq classOf[TreeTableModelSC]
+  override def isCellEditable(node: AnyRef, column: Int): Boolean = getColumnClass(column) eq classOf[TreeTableModel]
 
   override def setValueAt(aValue: AnyRef, node: AnyRef, column: Int): Unit = {
   }

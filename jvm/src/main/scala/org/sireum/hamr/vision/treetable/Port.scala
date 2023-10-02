@@ -3,7 +3,7 @@ package org.sireum.hamr.vision.treetable
 import org.sireum.{ISZ}
 import org.sireum.hamr.vision.value._
 
-class PortSC(var column: ISZ[Value]) {
+class Port(var column: ISZ[Value]) {
   var updated: Boolean = false;
 
   def getColumn: ISZ[Value] = { return column; }

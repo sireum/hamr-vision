@@ -2,8 +2,8 @@ package org.sireum.hamr.vision.treetable
 
 import scala.collection.mutable
 
-class CategorySC(val name: String) {
-  val children = new mutable.HashMap[Int, PortSC]
+class JCategory(val name: String) {
+  val children = new mutable.HashMap[Int, Port]
 
   override def toString: String = { return name }
 }
