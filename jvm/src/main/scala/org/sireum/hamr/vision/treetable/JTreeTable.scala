@@ -45,7 +45,7 @@ class JTreeTable(treeTableModel: TreeTableModel) extends JTable { // Create the 
 
   def walk(entry: JEntry): JEntry = {
     entry match {
-      case c: JJCategory =>
+      case c: JCategory =>
         var children: ISZ[JEntry] = ISZ()
         for(ee <- c.children ) {
           children = children :+ walk(ee)
@@ -258,7 +258,7 @@ class JTreeTable(treeTableModel: TreeTableModel) extends JTable { // Create the 
 
                   i += 1
                 }
-              } else if (tree.isCollapsed(row) && node.isInstanceOf[JJCategory]) {
+              } else if (tree.isCollapsed(row) && node.isInstanceOf[JCategory]) {
                 tree.expandRow(row)
                 for (i <- 0 until treeTableModel.getChildCount(node)) {
                   if(i == 0){
@@ -268,7 +268,7 @@ class JTreeTable(treeTableModel: TreeTableModel) extends JTable { // Create the 
                     tree.expandRow(row + childNode + 2)
                   }
                 }
-              } else if(tree.isExpanded(row) && node.isInstanceOf[JJCategory]) {
+              } else if(tree.isExpanded(row) && node.isInstanceOf[JCategory]) {
                 for (i <- 0 until treeTableModel.getChildCount(node)) {
                   if (i == 0) {
                     tree.collapseRow(row + 1)
