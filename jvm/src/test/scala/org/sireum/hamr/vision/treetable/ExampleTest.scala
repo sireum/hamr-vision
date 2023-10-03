@@ -4,13 +4,12 @@ import org.sireum.Random.Gen64
 import org.sireum.Random.Impl.Xoshiro256
 import org.sireum._
 import org.sireum.hamr.vision.value._
-import org.sireum.hamr.vision.value.{RandomLib, Value}
+import org.sireum.hamr.vision.value.{RandomLib}
 import org.sireum.test.TestSuite
 
 import java.awt._
 import java.awt.event._
 import javax.swing._
-import scala.collection.mutable
 
 class ExampleTest extends TestSuite {
 
@@ -47,48 +46,46 @@ class ExampleTest extends TestSuite {
         halt("Infeasible")
       }
 
-      val entries: ISZ[JEntry] = ISZ(
-        new JCategory(
+      val entries: ISZ[Entry] = ISZ(
+        Category(
           "Component 0",
           ISZ(
-            new JCategory(
+            Category(
               "Input",
               ISZ(
-                new JPort("110", ISZ(StringValue("In 0"), StringValue("This is an input port"), StringValue(""))),
-                new JPort("111", ISZ(StringValue("In 1"), StringValue("I am another port"), StringValue("")))
+                Row("110", ISZ(StringValue("In 0"), StringValue("This is an input port"), StringValue(""))),
+                Row("111", ISZ(StringValue("In 1"), StringValue("I am another port"), StringValue("")))
               )
             ),
-            new JCategory(
+            Category(
               "Output",
               ISZ(
-                new JPort("112", ISZ(StringValue("Out 0"), StringValue("This is an Output"), StringValue(""))),
-                new JPort("113", ISZ(StringValue("Out 1"), StringValue("Haha robot talk"), StringValue("")))
+                Row("112", ISZ(StringValue("Out 0"), StringValue("This is an Output"), StringValue(""))),
+                Row("113", ISZ(StringValue("Out 1"), StringValue("Haha robot talk"), StringValue("")))
               )
             )
           )
         ),
-        new JCategory(
+        Category(
           "Component 1",
           ISZ(
-            new JCategory(
+            Category(
               "Input 1",
               ISZ(
-                new JPort("120", ISZ(StringValue("In 0"), StringValue("More inputs!"), StringValue(""))),
-                new JPort("121", ISZ(StringValue("In 1"), StringValue("The bite of '87?"), StringValue("")))
+                Row("120", ISZ(StringValue("In 0"), StringValue("More inputs!"), StringValue(""))),
+                Row("121", ISZ(StringValue("In 1"), StringValue("The bite of '87?"), StringValue("")))
               )
             ),
-            new JCategory(
+            Category(
               "Output 1",
               ISZ(
-                new JPort("122", ISZ(StringValue("Out 0"), StringValue("Bendy?"), StringValue(""))),
-                new JPort("123", ISZ(StringValue("Out 1"), StringValue("Pizza orders"), StringValue("")))
+                Row("122", ISZ(StringValue("Out 0"), StringValue("Bendy?"), StringValue(""))),
+                Row("123", ISZ(StringValue("Out 1"), StringValue("Pizza orders"), StringValue("")))
               )
             )
           )
         )
       )
-
-      val model = new DemoTreeTableModel(entries)
 
       val menuBar = new JMenuBar
       val optionsMenu = new JMenu("Options")
@@ -98,10 +95,10 @@ class ExampleTest extends TestSuite {
       optionsMenu.add(colorChoice)
       menuBar.add(optionsMenu)
 
-      val tt = new JTreeTable(model)
-      for (i <- 0 until entries.size.toInt) {
-        tt.walk(entries(i))
-      }
+      val w = new Walk
+      val model = new DemoTreeTableModel(w.construct(entries))
+      val tt = new JTreeTable(model, w.getMap)
+
       val jf = new JFrame()
       jf.setTitle("Example Test")
       jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
