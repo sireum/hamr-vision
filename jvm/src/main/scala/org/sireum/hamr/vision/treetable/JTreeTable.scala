@@ -11,7 +11,7 @@ import org.sireum._
 import org.sireum.hamr.vision.value.Value
 import scala.collection.mutable
 
-class JTreeTable(treeTableModel: TreeTableModel) extends JTable { // Create the tree. It will be used as a renderer and editor.
+class JTreeTable(treeTableModel: TreeTableModel, map: mutable.HashMap[String, JPort]) extends JTable { // Create the tree. It will be used as a renderer and editor.
   /** A subclass of JTree. */
   protected var tree: TreeTableCellRenderer = _
   tree = new TreeTableCellRenderer(treeTableModel)
@@ -30,7 +30,6 @@ class JTreeTable(treeTableModel: TreeTableModel) extends JTable { // Create the 
   setIntercellSpacing(new Dimension(0, 0))
   // And update the height of the trees row to match that of
   // the table.
-  var map = mutable.HashMap[String, JPort]()
   if (tree.getRowHeight < 1) {
     // Metal looks better like this.
     setRowHeight(18)
@@ -42,20 +41,6 @@ class JTreeTable(treeTableModel: TreeTableModel) extends JTable { // Create the 
 
   var colorChoice = Color.yellow
   def setColorChoice(c: Color): Unit = { colorChoice = c}
-
-  def walk(entry: JEntry): JEntry = {
-    entry match {
-      case c: JCategory =>
-        var children: ISZ[JEntry] = ISZ()
-        for(ee <- c.children ) {
-          children = children :+ walk(ee)
-        }
-        return c
-      case r: JPort =>
-        map(r.rowID) = r
-        return map(r.rowID)
-    }
-  }
 
   def updatePort(portID: String, value: Value): Unit = {
     val port = map(portID)
