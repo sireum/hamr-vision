@@ -113,12 +113,25 @@ Value.scala
       halt("Requirements too strict to generate")
     }
 
-  // ========  C ==========}
+  // ========  C ==========
     def get_Config_C: Config_C
     def set_Config_C(config: Config_C): RandomLib
 
     def nextC(): C = {
-      var r = gen.nextC()
+      val conf = get_Config_C
+
+      var r: C = if (conf.low.isEmpty) {
+          if (conf.high.isEmpty)
+            gen.nextC()
+          else
+            gen.nextCBetween(C.fromZ(0), conf.high.get)
+        } else {
+          if (conf.high.isEmpty)
+            gen.nextCBetween(conf.low.get, C.fromZ(1114111))
+          else
+            gen.nextCBetween(conf.low.get, conf.high.get)
+        }
+
       if(get_Config_C.attempts >= 0) {
        for (i <- 0 to get_Config_C.attempts) {
          if (get_Config_C.filter(r)) {
@@ -127,7 +140,17 @@ Value.scala
          if (get_Config_C.verbose) {
            println(s"Retrying for failing value: $r")
          }
-         r = gen.nextC()
+         r = if (conf.low.isEmpty) {
+           if (conf.high.isEmpty)
+             gen.nextC()
+           else
+              gen.nextCBetween(C.fromZ(0), conf.high.get)
+          } else {
+            if (conf.high.isEmpty)
+              gen.nextCBetween(conf.low.get, C.fromZ(1114111))
+            else
+             gen.nextCBetween(conf.low.get, conf.high.get)
+         }
        }
       } else {
        while(T) {
@@ -137,7 +160,17 @@ Value.scala
          if (get_Config_C.verbose) {
            println(s"Retrying for failing value: $r")
          }
-         r = gen.nextC()
+         r = if (conf.low.isEmpty) {
+           if (conf.high.isEmpty)
+             gen.nextC()
+           else
+              gen.nextCBetween(C.fromZ(0), conf.high.get)
+          } else {
+            if (conf.high.isEmpty)
+              gen.nextCBetween(conf.low.get, C.fromZ(1114111))
+            else
+             gen.nextCBetween(conf.low.get, conf.high.get)
+         }
        }
       }
       assert(F, "Requirements too strict to generate")
@@ -852,7 +885,7 @@ Value.scala
     val length: Z = gen.nextZBetween(0, get_numElement)
     var str: String = ""
     for(r <- 0 until length){
-      str = s"${str}${nextC().string}"
+      str = s"${str}${gen.nextC().string}"
     }
 
     return str
@@ -1360,20 +1393,6 @@ Value.scala
 
     return temp
   }
-
-  //=================== ISZ[Pair] =====================
-/*
-  def nextISZPair(): ISZ[Pair] = {
-    val length: Z = gen.nextZBetween(0, get_numElement)
-    var temp: ISZ[Pair] = ISZ()
-    for (r <- 0 until length) {
-      temp = temp :+ nextPair()
-    }
-
-    return temp
-  }
-
- */
 }
 
 @record class RandomLib(val gen: org.sireum.Random.Gen) extends RandomLibI {
@@ -1417,7 +1436,7 @@ Value.scala
   // ============= C ===================
   def alwaysTrue_C(v: C): B = {return T}
 
-  var config_C: Config_C = Config_C(100, _verbose, alwaysTrue_C _)
+  var config_C: Config_C = Config_C(None(), None(), 100, _verbose, alwaysTrue_C _)
   def get_Config_C: Config_C = {return config_C}
 
   def set_Config_C(config: Config_C): RandomLib ={
@@ -1645,7 +1664,7 @@ Value.scala
   // ============= RecordValue ===================
   def alwaysTrue_RecordValue(v: RecordValue): B = {return T}
 
-  var config_RecordValue: Config_RecordValue = Config_RecordValue(100, _verbose, RecordValue.D_Inv_RecordValue _)
+  var config_RecordValue: Config_RecordValue = Config_RecordValue(100, _verbose, org.sireum.hamr.vision.value.RecordValue.D_Inv_RecordValue _)
 
   def get_Config_RecordValue: Config_RecordValue = {return config_RecordValue}
 

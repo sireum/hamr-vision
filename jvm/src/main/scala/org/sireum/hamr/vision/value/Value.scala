@@ -25,13 +25,13 @@ import org.sireum._
 // Sergen requires named types for fields so can't do ISZ[(String, Value)]
 @datatype class RecordValue(fields: ISZ[Pair]) extends CollectionValue {
   @spec def FieldIdentifiersMustBeStrings = Invariant (
-    All{ i: Z => (i <= 0 & i < fields.size) -->: ( fields(i).p1.isInstanceOf[StringValue] )}
+    All{ i: Z => (i <= 0 & i < fields.size) -->: ( fields(i).p1.isInstanceOf[PrimitiveValue] )}
   )
 }
 
 object RecordValue {
   @strictpure def D_Inv_RecordValue(value: RecordValue): B =
-    ops.ISZOps(value.fields).forall(p => p.p1.isInstanceOf[StringValue])
+    ops.ISZOps(value.fields).forall(p => p.p1.isInstanceOf[PrimitiveValue])
 }
 
 @datatype class MapValue(entries: ISZ[Pair]) extends CollectionValue
