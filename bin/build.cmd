@@ -117,7 +117,9 @@ def regenTools(): Unit = {
 
   proc"$sireum tools sergen -p $vpackage -m json,msgpack -o $valueRoot $dataFiles".at(home).echo.console.runCheck()
 
-  proc"$sireum tools slangcheck generator -p $vpackage -o $valueRoot $dataFiles".at(home).echo.console.runCheck()
+  //proc"$sireum tools slangcheck generator -p $vpackage -o $valueRoot $dataFiles".at(home).echo.console.runCheck()
+
+  proc"$sireum proyek slangcheck -p $vpackage -o $valueRoot $home $dataFiles".at(home).echo.console.runCheck()
 }
 
 def m2(): Os.Path = {
