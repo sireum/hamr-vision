@@ -255,6 +255,7 @@ class JTreeTable(treeTableModel: TreeTableModel, map: mutable.HashMap[String, JP
                 tree.collapseRow(row)
               } else {
                 val n = node.asInstanceOf[JPort]
+                new Info(n)
               }
             }
             val newME = new MouseEvent(tree, me.getID, me.getWhen, me.getModifiers, me.getX - getCellRect(0, counter, true).x, me.getY, me.getClickCount, me.isPopupTrigger)
