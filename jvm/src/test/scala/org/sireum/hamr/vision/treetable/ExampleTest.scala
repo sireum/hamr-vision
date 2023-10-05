@@ -117,37 +117,37 @@ class ExampleTest extends TestSuite {
       })
 
       while (true) {
-        val in1 = StringValue(nextString().native)
-        val in2 = StringValue(nextString().native)
+        val in1 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
+        val in2 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
 
-        tt.updatePort("110", in1)
-        tt.updatePort("111", in2)
-
-        // let component think
-        Thread.sleep(500)
-
-        val out1 = StringValue(nextString().native)
-        val out2 = StringValue(nextString().native)
-
-        tt.updatePort("120", out1)
-        tt.updatePort("121", out2)
-
-        Thread.sleep(500)
-
-        val in3 = StringValue(nextString().native)
-        val in4 = StringValue(nextString().native)
-
-        tt.updatePort("112", in3)
-        tt.updatePort("113", in4)
+        tt.update("110", in1)
+        tt.update("111", in2)
 
         // let component think
         Thread.sleep(500)
 
-        val out3 = StringValue(nextString().native)
-        val out4 = StringValue(nextString().native)
+        val out1 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
+        val out2 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
 
-        tt.updatePort("122", out3)
-        tt.updatePort("123", out4)
+        tt.update("120", out1)
+        tt.update("121", out2)
+
+        Thread.sleep(500)
+
+        val in3 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
+        val in4 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
+
+        tt.update("112", in3)
+        tt.update("113", in4)
+
+        // let component think
+        Thread.sleep(500)
+
+        val out3 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
+        val out4 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
+
+        tt.update("122", out3)
+        tt.update("123", out4)
 
         // wait before switching to the other component
         Thread.sleep(2000)

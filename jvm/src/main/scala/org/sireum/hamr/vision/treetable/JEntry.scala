@@ -1,17 +1,26 @@
 package org.sireum.hamr.vision.treetable
 
-import org.sireum.ISZ
+import org.sireum.{ISZ, MSZ, Z}
 import org.sireum.hamr.vision.value.{StringValue, Value}
 
 trait JEntry
 
 class JPort(val rowID: String, var column: ISZ[Value]) extends JEntry {
-  var updated: Boolean = false;
+  // invariants: size of the following sequences are always the same
+  // as the size of column
+  val updatedCells: MSZ[Boolean] = MSZ.create(column.size, false)
 
   def getColumn: ISZ[Value] = { return column; }
-  def setValue(value: Value): Unit = {column = ISZ[Value](column(0), column(1), value)}
-  def getUpdated: Boolean = { return updated; }
-  def setUpdated(updatedN: Boolean): Unit = { updated = updatedN; }
+  def setValueAt(rowId: Z, contents: Value): Unit = {
+    column = column(rowId ~> contents)
+
+    if (!updatedCells(rowId)) {
+      updatedCells(rowId) = true
+    }
+    /// if recordType and expandedCells(rowId) is false, then expand
+    //  else collapse
+  }
+
   override def toString: String = {
     return (column(0) match {
       case StringValue(v) => v.native

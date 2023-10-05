@@ -42,23 +42,15 @@ class JTreeTable(treeTableModel: TreeTableModel, map: mutable.HashMap[String, JP
   var colorChoice = Color.yellow
   def setColorChoice(c: Color): Unit = { colorChoice = c}
 
-  def updatePort(portID: String, value: Value): Unit = {
-    val port = map(portID)
-    port.setValue(value)
-    port.setUpdated(true)
-    if(colorToggle) tree.setCellRenderer(new cellColor)
-  }
-
-  class cellColor extends DefaultTreeCellRenderer {
-    override def getTreeCellRendererComponent(tree: JTree, value: AnyRef, sel: Boolean, exp: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component = {
-      super.getTreeCellRendererComponent(tree, value, sel, exp, leaf, row, hasFocus)
-      if(value.isInstanceOf[JPort] && getColorToggle) {
-        val port = value.asInstanceOf[JPort]
-        setBackgroundNonSelectionColor(if (port.getUpdated) colorChoice
-        else Color.white)
+  // the update method codegen, et other clients, will call
+  def update(rowId: String, values : ISZ[Option[Value]]): Unit = {
+    for(i <- 0 until values.size) {
+      if (values(i).nonEmpty) {
+        // want to update the ith cell of the row corresponding to
+        val contents: Value = values(i).get
+        val port = map(rowId)
+        port.setValueAt(i, contents)
       }
-      else setBackgroundNonSelectionColor(Color.white)
-      this
     }
   }
 
@@ -68,8 +60,10 @@ class JTreeTable(treeTableModel: TreeTableModel, map: mutable.HashMap[String, JP
       val node = table.getValueAt(row, 0)
       if (node.isInstanceOf[JPort] && getColorToggle) {
         val port = node.asInstanceOf[JPort]
-        setBackground(if (port.getUpdated) colorChoice
-        else Color.white)
+        for(i <- 0 until port.updatedCells.size) {
+          setBackground(if (port.updatedCells(i) && i == column) colorChoice
+          else Color.white)
+        }
       } else setBackground(table.getBackground)
       if (isSelected) setBackground(table.getSelectionBackground)
 
@@ -182,12 +176,8 @@ class JTreeTable(treeTableModel: TreeTableModel, map: mutable.HashMap[String, JP
       for(i <- 1 until table.getColumnCount){
         table.getColumnModel.getColumn(i).setCellRenderer(new rowColor) //Overriding the cell renderers any column besides the first
       }
-      val node = table.getValueAt(row, 0)
-      if (node.isInstanceOf[JPort] && getColorToggle) {
-        val port = value.asInstanceOf[JPort]
-        setBackground(if (port.getUpdated) colorChoice else table.getBackground)
-      } else setBackground(table.getBackground)
       if (isSelected) setBackground(table.getSelectionBackground)
+      else setBackground(table.getBackground)
       visibleRow = row
       this
     }
@@ -264,9 +254,8 @@ class JTreeTable(treeTableModel: TreeTableModel, map: mutable.HashMap[String, JP
                 }
                 tree.collapseRow(row)
               } else {
-                if(tree.isCollapsed(row)) tree.expandRow(row)
-                else tree.collapseRow(row)
-              }
+                val n = node.asInstanceOf[JPort]
+
             }
             val newME = new MouseEvent(tree, me.getID, me.getWhen, me.getModifiers, me.getX - getCellRect(0, counter, true).x, me.getY, me.getClickCount, me.isPopupTrigger)
             tree.dispatchEvent(newME)

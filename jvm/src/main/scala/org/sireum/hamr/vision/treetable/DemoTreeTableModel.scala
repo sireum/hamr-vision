@@ -14,6 +14,7 @@ class DemoTreeTableModel(var list: ISZ[JEntry]) extends AbstractTreeTableModel(D
   def getPort(node: AnyRef, place: Int): AnyRef = {
     if (node.isInstanceOf[JPort]) return node.asInstanceOf[JPort].getColumn(place) match {
       case StringValue(v) => v.native
+      //case RecordValue(r) =>
       case _ => "This isn't handled yet"
     }
     null
