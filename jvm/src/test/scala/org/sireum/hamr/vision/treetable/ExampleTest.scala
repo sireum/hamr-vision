@@ -53,7 +53,7 @@ class ExampleTest extends TestSuite {
             Category(
               "Input",
               ISZ(
-                Row("110", ISZ(StringValue("In 0"), StringValue("This is an input port"), StringValue(""))),
+                Row("110", ISZ(StringValue("In 0"), StringValue("This is an input port"), StringValue("Should he write it down? That was the question running through his mind. He couldn't believe what had just happened and he knew nobody else would believe him as well. Even if he documented what had happened by writing it down, he still didn't believe anyone would still believe it. So the question remained. Was it be worth it to actually write it down?"))),
                 Row("111", ISZ(StringValue("In 1"), StringValue("I am another port"), StringValue("")))
               )
             ),
@@ -120,7 +120,7 @@ class ExampleTest extends TestSuite {
         val in1 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
         val in2 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
 
-        tt.update("110", in1)
+        //tt.update("110", in1)
         tt.update("111", in2)
 
         // let component think
