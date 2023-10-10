@@ -32,7 +32,7 @@ class ExampleTest extends TestSuite {
         // TODO: seems like nextC could have a from/between.  This issue with filters
         //       is small bounds leads to failures to gen a random c that satisfies
         //       the bound
-        r.set_Config_C(r.get_Config_C()(filter = c => c.value >= 32 && c.value <= 55639))
+        r.set_Config_C(r.get_Config_C()(low = Some(c" "), high = Some(c"~")))
       }
 
       def nextString(): String = {
