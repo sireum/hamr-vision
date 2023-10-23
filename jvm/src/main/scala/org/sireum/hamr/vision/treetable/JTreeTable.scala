@@ -1,7 +1,7 @@
 package org.sireum.hamr.vision.treetable
 
 import java.awt._
-import java.awt.event.MouseEvent
+import java.awt.event.{KeyEvent, KeyListener, MouseEvent}
 import java.util.EventObject
 import javax.swing._
 import javax.swing.event._
@@ -9,7 +9,6 @@ import javax.swing.table._
 import javax.swing.tree._
 import org.sireum._
 import org.sireum.hamr.vision.value.Value
-import scala.collection.mutable
 
 class JTreeTable(list: ISZ[Entry]) extends JTable { // Create the tree. It will be used as a renderer and editor.
   /** A subclass of JTree. */
@@ -43,6 +42,26 @@ class JTreeTable(list: ISZ[Entry]) extends JTable { // Create the tree. It will 
 
   var colorChoice = Color.yellow
   def setColorChoice(c: Color): Unit = { colorChoice = c}
+
+  this.addKeyListener(new KeyListener {
+    override def keyTyped(e: KeyEvent): Unit = {}
+
+    override def keyPressed(e: KeyEvent): Unit = {
+      val code = e.getKeyCode
+      val selected = tree.getSelectionRows
+      if(selected.nonEmpty){
+        val row = selected(0)
+        code match {
+          case 37 => if (tree.isExpanded(row)) tree.collapseRow(row)
+          case 39 => if (tree.isCollapsed(row)) tree.expandRow(row)
+          case _ =>
+        }
+        tree.setSelectionRow(row)
+      }
+    }
+
+    override def keyReleased(e: KeyEvent): Unit = {}
+  })
 
   // the update method codegen, et other clients, will call
   def update(rowId: String, values : ISZ[Option[Value]]): Unit = {
