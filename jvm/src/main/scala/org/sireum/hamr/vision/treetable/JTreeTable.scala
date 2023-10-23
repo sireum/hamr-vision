@@ -65,13 +65,18 @@ class JTreeTable(list: ISZ[Entry]) extends JTable { // Create the tree. It will 
 
   // the update method codegen, et other clients, will call
   def update(rowId: String, values : ISZ[Option[Value]]): Unit = {
-    for(i <- 0 until values.size) {
-      if (values(i).nonEmpty) {
-        // want to update the ith cell of the row corresponding to
-        val contents: Value = values(i).get
-        val port = map(rowId)
-        port.setValueAt(i, contents)
+    if(values.size == treeTableModel.getColumnCount){
+      for (i <- 0 until values.size) {
+        if (values(i).nonEmpty) {
+          // want to update the ith cell of the row corresponding to
+          val contents: Value = values(i).get
+          val port = map(rowId)
+          port.setValueAt(i, contents)
+        }
       }
+    } else {
+      System.out.println("Error: Length Out Of Bounds at Update Row: " + rowId)
+      System.exit(0)
     }
   }
 
