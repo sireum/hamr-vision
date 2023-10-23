@@ -16,7 +16,7 @@ object DemoTreeTableModel {
 class DemoTreeTableModel(var list: ISZ[Entry]) extends AbstractTreeTableModel(DemoTreeTableModel.root) {
 
   val w = new Walk
-  val JList = w.construct(list)
+  val JList = w.construct(list, getColumnCount)
   def getMap: mutable.HashMap[org.sireum.String, JPort] = { return w.getMap }
 
   def getPort(node: AnyRef, place: Int): AnyRef = {
