@@ -11,8 +11,10 @@ import org.sireum._
 import org.sireum.hamr.vision.value.Value
 import scala.collection.mutable
 
-class JTreeTable(treeTableModel: TreeTableModel, map: mutable.HashMap[String, JPort]) extends JTable { // Create the tree. It will be used as a renderer and editor.
+class JTreeTable(list: ISZ[Entry]) extends JTable { // Create the tree. It will be used as a renderer and editor.
   /** A subclass of JTree. */
+  val treeTableModel = new DemoTreeTableModel(list)
+  val map = treeTableModel.getMap
   protected var tree: TreeTableCellRenderer = _
   tree = new TreeTableCellRenderer(treeTableModel)
   // Install a tableModel representing the visible rows in the tree.

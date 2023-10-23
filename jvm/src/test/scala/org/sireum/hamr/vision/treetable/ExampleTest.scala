@@ -95,9 +95,7 @@ class ExampleTest extends TestSuite {
       optionsMenu.add(colorChoice)
       menuBar.add(optionsMenu)
 
-      val w = new Walk
-      val model = new DemoTreeTableModel(w.construct(entries))
-      val tt = new JTreeTable(model, w.getMap)
+      val tt = new JTreeTable(entries)
 
       val jf = new JFrame()
       jf.setTitle("Example Test")
