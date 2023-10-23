@@ -63,6 +63,8 @@ class JTreeTable(list: ISZ[Entry]) extends JTable { // Create the tree. It will 
     override def keyReleased(e: KeyEvent): Unit = {}
   })
 
+  var updated: ISZ[String] = ISZ()
+
   // the update method codegen, et other clients, will call
   def update(rowId: String, values : ISZ[Option[Value]]): Unit = {
     if(values.size == treeTableModel.getColumnCount){
@@ -72,12 +74,26 @@ class JTreeTable(list: ISZ[Entry]) extends JTable { // Create the tree. It will 
           val contents: Value = values(i).get
           val port = map(rowId)
           port.setValueAt(i, contents)
+          updated = updated :+ rowId
         }
       }
     } else {
       System.out.println("Error: Length Out Of Bounds at Update Row: " + rowId)
       System.exit(0)
     }
+  }
+
+  def hyperPeriod(): Unit = {
+    for(i <- 0 until updated.size.toInt){
+      map(updated(i)) match {
+        case p: JPort =>
+          val column = p.updatedCells
+          for(i <- 0 until p.updatedCells.size.toInt){
+            column(i) = false
+          }
+      }
+    }
+    updated = ISZ()
   }
 
   class rowColor extends DefaultTableCellRenderer {
