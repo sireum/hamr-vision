@@ -16,7 +16,7 @@ class ExampleTest extends TestSuite {
   val isCI: B = Os.env("GITLAB_CI").nonEmpty || Os.env("GITHUB_ACTIONS").nonEmpty || Os.env("BUILD_ID").nonEmpty
 
   "Live Feed" in {
-    if (!isCI) {//Os.env("__CFBundleIdentifier") == Some(string"com.jetbrains.intellij.ce")) {
+    if (!isCI) { //Os.env("__CFBundleIdentifier") == Some(string"com.jetbrains.intellij.ce")) {
       val seedGen: Gen64 = Random.Gen64Impl(Xoshiro256.create)
 
       val freshRandomLib: RandomLib = {
@@ -127,16 +127,16 @@ class ExampleTest extends TestSuite {
         val out1 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
         val out2 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
 
-        tt.update("120", out1)
-        tt.update("121", out2)
+        tt.update("112", out1)
+        tt.update("113", out2)
 
         Thread.sleep(500)
 
         val in3 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
         val in4 = ISZ[Option[Value]](None(), None(), Some(StringValue(nextString().native)))
 
-        tt.update("112", in3)
-        tt.update("113", in4)
+        tt.update("120", in3)
+        tt.update("121", in4)
 
         // let component think
         Thread.sleep(500)
