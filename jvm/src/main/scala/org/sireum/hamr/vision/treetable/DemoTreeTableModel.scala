@@ -9,11 +9,9 @@ import scala.collection.mutable
 
 object DemoTreeTableModel {
   private val root = "System"
-  protected var cNames: Array[String] = Array("Port", "Description", "Value")
-  protected var cTypes: Array[Class[_]] = Array(classOf[TreeTableModel], classOf[String], classOf[String])
 }
 
-class DemoTreeTableModel(var list: ISZ[Entry]) extends AbstractTreeTableModel(DemoTreeTableModel.root) {
+class DemoTreeTableModel(var list: ISZ[Entry], var colNames: ISZ[String]) extends AbstractTreeTableModel(DemoTreeTableModel.root) {
 
   val w = new Walk
   val JList = w.construct(list, getColumnCount)
@@ -28,15 +26,15 @@ class DemoTreeTableModel(var list: ISZ[Entry]) extends AbstractTreeTableModel(De
     null
   }
 
-  override def getColumnCount = 3
+  override def getColumnCount = colNames.size.toInt
 
   override def getColumnClass(column: Int): Class[_] = {
     //return column == 0 ? TreeTableModel.class : Object.class;
-    if (column < 0 || column >= DemoTreeTableModel.cTypes.length) return classOf[AnyRef]
-    DemoTreeTableModel.cTypes(column)
+    if(column == 0) classOf[TreeTableModel]
+    else classOf[String]
   }
 
-  override def getColumnName(column: Int): String = DemoTreeTableModel.cNames(column)
+  override def getColumnName(column: Int): String = colNames(column)
 
   override def getValueAt(node: AnyRef, column: Int): AnyRef = {
     //return node.toString();
