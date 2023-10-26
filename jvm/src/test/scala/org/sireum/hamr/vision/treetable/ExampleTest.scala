@@ -95,7 +95,9 @@ class ExampleTest extends TestSuite {
       optionsMenu.add(colorChoice)
       menuBar.add(optionsMenu)
 
-      val tt = new JTreeTable(entries)
+      val colNames = ISZ("Port", "Description", "Value")
+
+      val tt = new JTreeTable(entries, colNames)
 
       val jf = new JFrame()
       jf.setTitle("Example Test")
@@ -148,6 +150,10 @@ class ExampleTest extends TestSuite {
         tt.update("123", out4)
 
         // wait before switching to the other component
+        Thread.sleep(2000)
+
+        tt.hyperPeriod()
+
         Thread.sleep(2000)
       }
     }
