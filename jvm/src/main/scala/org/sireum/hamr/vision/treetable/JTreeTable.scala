@@ -53,10 +53,19 @@ class JTreeTable(list: ISZ[Entry], colNames: ISZ[java.lang.String]) extends JTab
         val row = selected(0)
         code match {
           case 37 => if (tree.isExpanded(row)) tree.collapseRow(row)
-          case 39 => if (tree.isCollapsed(row)) tree.expandRow(row)
+            tree.setSelectionRow(row)
+          case 39 =>
+            if (tree.isCollapsed(row)) {
+              if(tree.getSelectionPath.getLastPathComponent.isInstanceOf[JPort]){
+                tree.setSelectionRow(row + 1)
+              } else {
+                tree.expandRow(row)
+                tree.setSelectionRow(row)
+              }
+            }
+            else tree.setSelectionRow(row + 1)
           case _ =>
         }
-        tree.setSelectionRow(row)
       }
     }
 
