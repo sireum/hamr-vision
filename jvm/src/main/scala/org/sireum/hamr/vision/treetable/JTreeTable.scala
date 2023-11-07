@@ -83,7 +83,7 @@ class JTreeTable(list: ISZ[Entry], colNames: ISZ[java.lang.String]) extends JTab
     }
   }
 
-  def hyperPeriod(): Unit = {
+  def clearColor(): Unit = {
     for(i <- 0 until updated.size.toInt){
       map(updated(i)) match {
         case p: JPort =>
@@ -265,36 +265,38 @@ class JTreeTable(list: ISZ[Entry], colNames: ISZ[java.lang.String]) extends JTab
                 var i = 0
                 while (i < tree.getRowCount) {
                   tree.expandRow(i)
-
                   i += 1
                 }
               } else if (tree.isExpanded(row) && node.isInstanceOf["System"]) {
-                var i = 0
-                while (i < tree.getRowCount) {
+                var i = tree.getRowCount
+                while (i >= 0) {
                   tree.collapseRow(i)
-
-                  i += 1
+                  i -= 1
                 }
               } else if (tree.isCollapsed(row) && node.isInstanceOf[JCategory]) {
                 tree.expandRow(row)
+                var totalChildren = 0
                 for (i <- 0 until treeTableModel.getChildCount(node)) {
                   if(i == 0){
                     tree.expandRow(row + 1)
                   } else {
-                    childNode = treeTableModel.getChildCount(treeTableModel.getChild(node, i))
-                    tree.expandRow(row + childNode + 2)
+                    childNode = treeTableModel.getChildCount(treeTableModel.getChild(node, i - 1))
+                    totalChildren += childNode
+                    tree.expandRow(row + totalChildren + i + 1)
                   }
                 }
+                totalChildren = 0
               } else if(tree.isExpanded(row) && node.isInstanceOf[JCategory]) {
+                var totalChildren = 0
                 for (i <- 0 until treeTableModel.getChildCount(node)) {
-                  if (i == 0) {
-                    tree.collapseRow(row + 1)
-                  } else {
-                    childNode = treeTableModel.getChildCount(treeTableModel.getChild(node, i))
-                    tree.collapseRow(row + childNode + 2)
-                  }
+                  childNode = treeTableModel.getChildCount(treeTableModel.getChild(node, i))
+                  totalChildren += childNode
                 }
-                tree.collapseRow(row)
+                totalChildren = totalChildren + row + treeTableModel.getChildCount(node)
+                while(totalChildren >= row){
+                  tree.collapseRow(totalChildren)
+                  totalChildren -= 1
+                }
               } else {
                 val n = node.asInstanceOf[JPort]
                 new Info(n)
