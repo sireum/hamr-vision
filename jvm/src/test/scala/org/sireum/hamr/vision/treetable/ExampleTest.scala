@@ -152,7 +152,7 @@ class ExampleTest extends TestSuite {
         // wait before switching to the other component
         Thread.sleep(2000)
 
-        tt.hyperPeriod()
+        tt.clearColor()
 
         Thread.sleep(2000)
       }
