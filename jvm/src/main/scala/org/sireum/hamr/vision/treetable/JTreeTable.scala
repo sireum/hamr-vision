@@ -311,7 +311,7 @@ class JTreeTable(list: ISZ[Entry], colNames: ISZ[java.lang.String]) extends JTab
                 new Info(n)
               }
             }
-            val newME = new MouseEvent(tree, me.getID, me.getWhen, me.getModifiers, me.getX - getCellRect(0, counter, true).x, me.getY, me.getClickCount, me.isPopupTrigger)
+            val newME = new MouseEvent(tree, me.getID, me.getWhen, me.getModifiersEx, me.getX - getCellRect(0, counter, true).x, me.getY, me.getClickCount, me.isPopupTrigger)
             tree.dispatchEvent(newME)
           }
         }
